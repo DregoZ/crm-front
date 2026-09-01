@@ -1,19 +1,45 @@
 <aside [class.collapsed]="isCollapsed()">
   <div class="sidebar-header">
     <h2 *ngIf="!isCollapsed()">CRM Coctelería</h2>
-    <h2 *ngIf="isCollapsed()">CRM</h2>
     <button (click)="toggleSidebar()" class="toggle-btn">≡</button>
   </div>
-  
+
   <nav class="sidebar-nav">
-    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-    <a routerLink="/clientes" routerLinkActive="active">Clientes</a>
-    <a routerLink="/eventos" routerLinkActive="active">Eventos</a>
-    
+    <a routerLink="/dashboard" routerLinkActive="active" title="Dashboard">
+      <mat-icon class="icon">dashboard</mat-icon>
+      <span class="nav-text" *ngIf="!isCollapsed()">Dashboard</span>
+    </a>
+
+    <a routerLink="/clientes" routerLinkActive="active" title="Clientes">
+      <mat-icon class="icon">people</mat-icon>
+      <span class="nav-text" *ngIf="!isCollapsed()">Clientes</span>
+    </a>
+
+    <a routerLink="/eventos" routerLinkActive="active" title="Eventos">
+      <mat-icon class="icon">event</mat-icon>
+      <span class="nav-text" *ngIf="!isCollapsed()">Eventos</span>
+    </a>
+
     <div class="nav-group">
       <span class="group-title" *ngIf="!isCollapsed()">Catálogo</span>
-      <a routerLink="/catalogo/tipos-barra" routerLinkActive="active">Tipos de Barra</a>
-      <a routerLink="/catalogo/cocteles" routerLinkActive="active">Cócteles</a>
+
+      <a
+        routerLink="/catalogo/tipos-barra"
+        routerLinkActive="active"
+        title="Tipos de Barra"
+      >
+        <mat-icon class="icon">local_bar</mat-icon>
+        <span class="nav-text" *ngIf="!isCollapsed()">Tipos de Barra</span>
+      </a>
+
+      <a
+        routerLink="/catalogo/cocteles"
+        routerLinkActive="active"
+        title="Cócteles"
+      >
+        <mat-icon class="icon">liquor</mat-icon>
+        <span class="nav-text" *ngIf="!isCollapsed()">Cócteles</span>
+      </a>
     </div>
   </nav>
 

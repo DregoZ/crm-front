@@ -17,25 +17,51 @@ aside.collapsed {
   padding: 1rem;
   border-bottom: 1px solid #34495e;
 }
-.sidebar-header h2 { margin: 0; font-size: 1.2rem; }
+.sidebar-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
 .toggle-btn {
-  background: none; border: none; color: white; cursor: pointer; font-size: 1.5rem;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.5rem;
 }
 .sidebar-nav {
   flex: 1;
   display: flex;
   flex-direction: column;
   padding: 1rem 0;
+  gap: 8px;
 }
 .sidebar-nav a {
   color: #bdc3c7;
   text-decoration: none;
   padding: 0.75rem 1rem;
   transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
 }
-.sidebar-nav a:hover, .sidebar-nav a.active {
-  background-color: #34495e;
-  color: white;
+.sidebar-nav a:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.sidebar-nav a.active {
+  background-color: #007bff; /* TODO: Cambiar al color primario de la app */
+  color: #fff;
+}
+.sidebar-nav .icon {
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px; /* Mantiene un ancho fijo para el icono */
 }
 .nav-group {
   margin-top: 1rem;
@@ -61,8 +87,11 @@ aside.collapsed {
   border-radius: 4px;
   cursor: pointer;
 }
-.logout-btn:hover { background-color: #c0392b; }
-aside.collapsed .sidebar-nav a, aside.collapsed .logout-btn {
+.logout-btn:hover {
+  background-color: #c0392b;
+}
+aside.collapsed .sidebar-nav a,
+aside.collapsed .logout-btn {
   font-size: 0; /* Ocultar texto al colapsar */
   padding: 1rem;
 }
