@@ -1,0 +1,25 @@
+<div class="form-container">
+  <h2>{{ isEdit ? 'Editar Cliente' : 'Nuevo Cliente' }}</h2>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label>Nombre *</label>
+      <input type="text" formControlName="nombre" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>Teléfono *</label>
+      <input type="text" formControlName="telefono" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" formControlName="email" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>Notas de gustos (Ej. Prefiere cítricos, alergias)</label>
+      <textarea formControlName="notas_gustos" class="form-control" rows="4"></textarea>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn btn-secondary" routerLink="/clientes">Cancelar</button>
+      <button type="submit" [disabled]="form.invalid" class="btn btn-primary">Guardar</button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,43 @@
+<div class="detalle-container" *ngIf="!loading() && cliente()">
+  <div class="header">
+    <h2>Ficha de Cliente: {{ cliente()?.nombre }}</h2>
+    <a routerLink="/clientes" class="btn btn-secondary">Volver</a>
+  </div>
+
+  <div class="info-grid">
+    <div class="card">
+      <h3>Datos de Contacto</h3>
+      <p><strong>Teléfono:</strong> {{ cliente()?.telefono }}</p>
+      <p><strong>Email:</strong> {{ cliente()?.email || 'N/A' }}</p>
+      <p><strong>Registro:</strong> {{ cliente()?.fecha_registro | date }}</p>
+    </div>
+    
+    <div class="card highlight">
+      <h3>Notas y Gustos</h3>
+      <p>{{ cliente()?.notas_gustos || 'Sin notas.' }}</p>
+    </div>
+  </div>
+
+  <div class="historial">
+    <h3>Historial de Eventos</h3>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ev of historialEventos()">
+          <td>{{ ev.fecha_evento | date:'shortDate' }}</td>
+          <td><span class="badge" [ngClass]="ev.estado">{{ ev.estado }}</span></td>
+          <td><a [routerLink]="['/eventos', ev._id]" class="btn-sm btn-info">Ver Evento</a></td>
+        </tr>
+        <tr *ngIf="historialEventos().length === 0">
+          <td colspan="3" class="text-center">No hay eventos registrados.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

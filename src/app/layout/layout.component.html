@@ -1,0 +1,14 @@
+<div class="layout-container">
+  <app-sidebar></app-sidebar>
+  <div class="main-content">
+    <header class="toolbar">
+      <div class="toolbar-title">Panel de Control</div>
+      <div class="user-info">
+        Bienvenido, {{ authService.currentUser()?.nombre }}
+      </div>
+    </header>
+    <main class="content-area">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

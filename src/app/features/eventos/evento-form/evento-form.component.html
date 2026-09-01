@@ -1,0 +1,58 @@
+<div class="form-container">
+  <h2>Nuevo Evento</h2>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-row">
+      <div class="form-group half">
+        <label>Cliente</label>
+        <select formControlName="id_cliente" class="form-control">
+          <option value="">Selecciona un cliente...</option>
+          <option *ngFor="let c of clientes()" [value]="c._id">{{ c.nombre }}</option>
+        </select>
+      </div>
+      <div class="form-group half">
+        <label>Tipo de Barra</label>
+        <select formControlName="id_tipo_barra" class="form-control">
+          <option value="">Selecciona tipo de barra...</option>
+          <option *ngFor="let tb of tiposBarra()" [value]="tb._id">{{ tb.nombre_barra }} ({{tb.precio_base_persona}}€/pax)</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group third">
+        <label>Asistentes</label>
+        <input type="number" formControlName="cantidad_asistentes" class="form-control">
+      </div>
+      <div class="form-group third">
+        <label>Fecha Evento</label>
+        <input type="date" formControlName="fecha_evento" class="form-control">
+      </div>
+      <div class="form-group third">
+        <label>Estado</label>
+        <select formControlName="estado" class="form-control">
+          <option value="Cotizado">Cotizado</option>
+          <option value="Confirmado">Confirmado</option>
+          <option value="Finalizado">Finalizado</option>
+          <option value="Cancelado">Cancelado</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Dirección</label>
+      <input type="text" formControlName="direccion" class="form-control">
+    </div>
+    <div class="form-group">
+      <label>Notas de Logística</label>
+      <textarea formControlName="logistica_notas" rows="3" class="form-control"></textarea>
+    </div>
+    
+    <div class="calculadora-preview">
+      <h3>Presupuesto Estimado</h3>
+      <div class="precio-final">{{ precioFinalCalculado() | currency:'EUR' }}</div>
+    </div>
+
+    <div class="actions">
+      <button type="button" routerLink="/eventos" class="btn btn-secondary">Cancelar</button>
+      <button type="submit" [disabled]="form.invalid" class="btn btn-primary">Guardar Evento</button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,23 @@
+<aside [class.collapsed]="isCollapsed()">
+  <div class="sidebar-header">
+    <h2 *ngIf="!isCollapsed()">CRM Coctelería</h2>
+    <h2 *ngIf="isCollapsed()">CRM</h2>
+    <button (click)="toggleSidebar()" class="toggle-btn">≡</button>
+  </div>
+  
+  <nav class="sidebar-nav">
+    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+    <a routerLink="/clientes" routerLinkActive="active">Clientes</a>
+    <a routerLink="/eventos" routerLinkActive="active">Eventos</a>
+    
+    <div class="nav-group">
+      <span class="group-title" *ngIf="!isCollapsed()">Catálogo</span>
+      <a routerLink="/catalogo/tipos-barra" routerLinkActive="active">Tipos de Barra</a>
+      <a routerLink="/catalogo/cocteles" routerLinkActive="active">Cócteles</a>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button (click)="logout()" class="logout-btn">Cerrar Sesión</button>
+  </div>
+</aside>

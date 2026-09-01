@@ -1,0 +1,16 @@
+.detalle-container { display: flex; flex-direction: column; gap: 2rem; }
+.header { display: flex; justify-content: space-between; align-items: center; }
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.card h3 { margin-top: 0; color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 0.5rem; }
+.highlight { background: #fdfbf7; border-left: 4px solid #f39c12; }
+.table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden; }
+.table th, .table td { padding: 1rem; text-align: left; border-bottom: 1px solid #ecf0f1; }
+.btn-secondary { background: #95a5a6; color: white; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px; }
+.btn-sm { padding: 0.25rem 0.5rem; text-decoration: none; border-radius: 3px; font-size: 0.875rem; }
+.btn-info { background: #17a2b8; color: white; }
+.badge { padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.75rem; font-weight: bold; }
+.badge.Confirmado { background-color: #d4edda; color: #155724; }
+.badge.Cotizado { background-color: #fff3cd; color: #856404; }
+.badge.Finalizado { background-color: #d1ecf1; color: #0c5460; }
+.badge.Cancelado { background-color: #f8d7da; color: #721c24; }

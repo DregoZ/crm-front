@@ -1,0 +1,61 @@
+<div class="dashboard-container">
+  <h1>Dashboard</h1>
+  
+  <div *ngIf="loading()" class="loading">Cargando datos...</div>
+
+  <ng-container *ngIf="!loading() && metricas()">
+    <div class="metricas-grid">
+      <div class="metric-card">
+        <h3>Eventos Confirmados (Mes)</h3>
+        <p class="metric-value">{{ metricas()?.eventosConfirmadosMes }}</p>
+      </div>
+      <div class="metric-card">
+        <h3>Facturación Proyectada</h3>
+        <p class="metric-value">{{ metricas()?.facturacionProyectada | currency:'EUR' }}</p>
+      </div>
+      <div class="metric-card">
+        <h3>Presupuestos Pendientes</h3>
+        <p class="metric-value">{{ metricas()?.presupuestosPendientes }}</p>
+      </div>
+    </div>
+
+    <div class="dashboard-content">
+      <div class="section proximos-eventos">
+        <h2>Próximos Eventos</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Cliente</th>
+              <th>Asistentes</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let evento of proximosEventos()">
+              <td>{{ evento.fecha_evento | date:'shortDate' }}</td>
+              <td>{{ evento.id_cliente }}</td>
+              <td>{{ evento.cantidad_asistentes }}</td>
+              <td><span class="badge" [ngClass]="evento.estado">{{ evento.estado }}</span></td>
+            </tr>
+            <tr *ngIf="proximosEventos().length === 0">
+              <td colspan="4" class="text-center">No hay eventos próximos.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section alertas">
+        <h2>Alertas</h2>
+        <div class="alert-list">
+          <div *ngFor="let alerta of alertas()" class="alert-item" [ngClass]="alerta.tipo">
+            <strong>{{ alerta.tipo === 'warning' ? '⚠️' : 'ℹ️' }}</strong> {{ alerta.mensaje }}
+          </div>
+          <div *ngIf="alertas().length === 0" class="text-center p-3 text-muted">
+            Todo en orden.
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>

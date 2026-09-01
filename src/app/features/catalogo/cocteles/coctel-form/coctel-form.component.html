@@ -1,0 +1,43 @@
+<div class="form-container">
+  <h2>Nuevo Cóctel</h2>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label>Nombre del Cóctel *</label>
+      <input type="text" formControlName="nombre" class="form-control">
+    </div>
+    
+    <div class="form-group">
+      <label>Cristalería *</label>
+      <input type="text" formControlName="cristaleria" class="form-control" placeholder="Ej: Vaso Largo">
+    </div>
+
+    <div class="ingredientes-section">
+      <div class="ingredientes-header">
+        <h3>Ingredientes</h3>
+        <button type="button" class="btn btn-sm btn-success" (click)="addIngrediente()">+ Añadir</button>
+      </div>
+      
+      <div formArrayName="ingredientes">
+        <div *ngFor="let ing of ingredientes.controls; let i=index" [formGroupName]="i" class="ingrediente-row">
+          <input type="text" formControlName="nombre_insumo" class="form-control" placeholder="Nombre (Ej: Ron Blanco)">
+          <input type="number" formControlName="cantidad_por_persona" class="form-control" placeholder="Cantidad">
+          <select formControlName="unidad_medida" class="form-control">
+            <option value="ml">ml</option>
+            <option value="pieza">pieza</option>
+            <option value="gramos">gramos</option>
+            <option value="hojas">hojas</option>
+          </select>
+          <button type="button" class="btn btn-sm btn-danger" (click)="removeIngrediente(i)">X</button>
+        </div>
+      </div>
+      <div *ngIf="ingredientes.length === 0" class="empty-state">
+        Añade al menos un ingrediente.
+      </div>
+    </div>
+
+    <div class="actions">
+      <button type="button" routerLink="/catalogo/cocteles" class="btn btn-secondary">Cancelar</button>
+      <button type="submit" [disabled]="form.invalid || ingredientes.length === 0" class="btn btn-primary">Guardar Cóctel</button>
+    </div>
+  </form>
+</div>
