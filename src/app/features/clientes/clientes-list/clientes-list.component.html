@@ -6,37 +6,37 @@
 
   <div *ngIf="loading()" class="loading">Cargando...</div>
 
-  <table class="table" *ngIf="!loading()">
-    <thead>
-      <tr>
-        <th>Nombre</th>
-        <th>Teléfono</th>
-        <th>Email</th>
-        <th>Fecha Registro</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let cliente of clientes()">
-        <td>{{ cliente.nombre }}</td>
-        <td>{{ cliente.telefono }}</td>
-        <td>{{ cliente.email || '-' }}</td>
-        <td>{{ cliente.fecha_registro | date:'shortDate' }}</td>
-        <td>
-          <a [routerLink]="[cliente._id]" class="btn-sm btn-info">Ver</a>
-          <a [routerLink]="[cliente._id, 'editar']" class="btn-sm btn-warning">Editar</a>
-          <button (click)="deleteCliente(cliente._id!)" class="btn-sm btn-danger">Borrar</button>
-        </td>
-      </tr>
-      <tr *ngIf="clientes().length === 0">
-        <td colspan="5" class="text-center">No hay clientes registrados.</td>
-      </tr>
-    </tbody>
-  </table>
+  <app-data-table
+    [columns]="columns"
+    [data]="clientes()"
+    [actions]="actions"
+    [loading]="loading()"
+    [sortActive]="state$.value.sort.active"
+    [sortDirection]="state$.value.sort.direction"
+    (sortChange)="onSortChange($event)"
+    emptyMessage="No hay clientes registrados."
+  >
+  </app-data-table>
 
   <div class="pagination" *ngIf="totalPages() > 1">
-    <button [disabled]="(page$ | async) === 1" (click)="changePage((page$.value) - 1)">Anterior</button>
-    <span>Página {{ page$ | async }} de {{ totalPages() }}</span>
-    <button [disabled]="(page$ | async) === totalPages()" (click)="changePage((page$.value) + 1)">Siguiente</button>
+    <button
+      [disabled]="(page$ | async) === 1"
+      (click)="changePage(page$.value - 1)"
+    >
+      Anterior
+    </button>
+    <span>Página {{ (state$ | async)?.page }} de {{ totalPages() }}</span>
+    <button
+      [disabled]="(state$ | async)?.page === 1"
+      (click)="changePage(state$.value.page - 1)"
+    >
+      Anterior
+    </button>
+    <button
+      [disabled]="(state$ | async)?.page === totalPages()"
+      (click)="changePage(state$.value.page + 1)"
+    >
+      Siguiente
+    </button>
   </div>
 </div>

@@ -10,9 +10,15 @@ export class ClientesService {
   private http = inject(HttpClient);
   private url = `${environment.apiUrl}/clientes`;
 
-  getAll(page = 1, limit = 10): Observable<PaginatedResponse<Cliente>> {
-    const params = new HttpParams().set('page', page).set('limit', limit);
-    return this.http.get<PaginatedResponse<Cliente>>(this.url, { params });
+  getAll(page: number, limit: number, sortBy?: string, order?: 'asc' | 'desc') {
+    let params = new HttpParams().set('page', page).set('limit', limit);
+
+    if (sortBy) params = params.set('sortBy', sortBy);
+    if (order) params = params.set('order', order);
+
+    return this.http.get<PaginatedResponse<Cliente>>(`${this.url}`, {
+      params,
+    });
   }
 
   getById(id: string): Observable<Cliente> {

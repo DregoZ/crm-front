@@ -1,0 +1,17 @@
+// data-table.component.scss
+.table-scroll-wrapper {
+  max-height: 70vh;
+  overflow: auto;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+.data-table { width: 100%; }
+
+tr.clickable { cursor: pointer; }
+tr.clickable:hover { background-color: rgba(0, 0, 0, 0.04); }
+
+.empty-state, .loading-state {
+  padding: 2rem;
+  text-align: center;
+  color: #7f8c8d;
+}
