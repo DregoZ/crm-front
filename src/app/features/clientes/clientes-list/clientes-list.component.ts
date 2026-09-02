@@ -18,11 +18,18 @@ import {
 } from '../../../shared/models/table-column.model';
 import { Sort } from '@angular/material/sort';
 import { ListState } from '../../../shared/models/list-states';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-clientes-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, DataTableComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    DataTableComponent,
+    MatIconModule,
+  ],
   templateUrl: './clientes-list.component.html',
   styleUrl: './clientes-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,

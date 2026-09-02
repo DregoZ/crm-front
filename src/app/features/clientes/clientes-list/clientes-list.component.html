@@ -1,7 +1,9 @@
 <div class="list-container">
   <div class="header-actions">
     <h2>Clientes</h2>
-    <a routerLink="nuevo" class="btn btn-primary">+ Nuevo Cliente</a>
+    <a routerLink="nuevo" class="btn btn-primary"
+      ><mat-icon class="icon">person_add</mat-icon> Nuevo Cliente</a
+    >
   </div>
 
   <div *ngIf="loading()" class="loading">Cargando...</div>
