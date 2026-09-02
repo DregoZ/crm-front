@@ -1,69 +1,103 @@
-<!-- data-table.component.html -->
-<div class="table-scroll-wrapper">
-  <table
-    mat-table
-    [dataSource]="data()"
-    matSort
-    [matSortActive]="sortActive()"
-    [matSortDirection]="sortDirection()"
-    (matSortChange)="onSortChange($event)"
-    class="data-table"
-  >
-    <ng-container *ngFor="let column of columns()" [matColumnDef]="column.name">
-      <th
-        mat-header-cell
-        *matHeaderCellDef
-        mat-sort-header
-        [disabled]="column.sortable === false"
-        [style.width.%]="column.size"
-      >
-        {{ column.label }}
-      </th>
-      <td mat-cell *matCellDef="let row" [style.width.%]="column.size">
-        <ng-container [ngSwitch]="column.type">
-          <span *ngSwitchCase="'date'">{{
-            getCellValue(row, column) | date: column.format || "shortDate"
-          }}</span>
-          <span *ngSwitchCase="'currency'">{{
-            getCellValue(row, column) | currency: "EUR"
-          }}</span>
-          <span *ngSwitchCase="'boolean'">{{
-            getCellValue(row, column) ? "Sí" : "No"
-          }}</span>
-          <span *ngSwitchDefault>{{ getCellValue(row, column) ?? "-" }}</span>
-        </ng-container>
-      </td>
-    </ng-container>
+<div class="table-container-wrapper">
+  <!-- NUEVO: Buscador integrado reutilizable -->
+  @if (withSearch()) {
+    <div class="table-search-bar">
+      <span class="search-icon"><mat-icon>search</mat-icon></span>
+      <input
+        type="text"
+        [placeholder]="searchPlaceholder()"
+        [value]="searchTerm()"
+        (input)="onSearch($event)"
+        class="search-input"
+      />
+    </div>
+  }
 
-    <ng-container matColumnDef="__actions">
-      <th mat-header-cell *matHeaderCellDef>Acciones</th>
-      <td mat-cell *matCellDef="let row">
-        <ng-container *ngFor="let action of actions()">
-          <button
-            mat-icon-button
-            *ngIf="!action.visible || action.visible(row)"
-            [class]="action.cssClass"
-            [attr.title]="action.label"
-            (click)="action.handler(row); $event.stopPropagation()"
+  <!-- Cambiado [dataSource] para que use los datos filtrados internamente -->
+  <div class="table-scroll-wrapper">
+    <table
+      mat-table
+      [dataSource]="filteredData()"
+      matSort
+      [matSortActive]="sortActive()"
+      [matSortDirection]="sortDirection()"
+      (matSortChange)="onSortChange($event)"
+      class="data-table"
+    >
+      <!-- Columnas dinámicas -->
+      @for (column of columns(); track column.name) {
+        <ng-container [matColumnDef]="column.name">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            mat-sort-header
+            [disabled]="column.sortable === false"
+            [style.width.%]="column.size"
           >
-            <mat-icon *ngIf="action.icon">{{ action.icon }}</mat-icon>
-            <span *ngIf="!action.icon">{{ action.label }}</span>
-          </button>
+            {{ column.label }}
+          </th>
+          <td mat-cell *matCellDef="let row" [style.width.%]="column.size">
+            @switch (column.type) {
+              @case ("date") {
+                <span>{{
+                  getCellValue(row, column) | date: column.format || "shortDate"
+                }}</span>
+              }
+              @case ("currency") {
+                <span>{{ getCellValue(row, column) | currency: "EUR" }}</span>
+              }
+              @case ("boolean") {
+                <span>{{ getCellValue(row, column) ? "Sí" : "No" }}</span>
+              }
+              @default {
+                <span>{{ getCellValue(row, column) ?? "-" }}</span>
+              }
+            }
+          </td>
         </ng-container>
-      </td>
-    </ng-container>
+      }
 
-    <tr mat-header-row *matHeaderRowDef="displayedColumns(); sticky: true"></tr>
-    <tr
-      mat-row
-      *matRowDef="let row; columns: displayedColumns()"
-      [class.clickable]="rowClickable()"
-      (click)="onRowClick(row)"
-    ></tr>
-  </table>
+      <!-- Columna de Acciones estática -->
+      <ng-container matColumnDef="__actions">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let row" class="actions-cell">
+          @for (action of actions(); track action.label) {
+            @if (!action.visible || action.visible(row)) {
+              <button
+                mat-icon-button
+                [class]="action.cssClass"
+                [attr.title]="action.label"
+                (click)="action.handler(row); $event.stopPropagation()"
+              >
+                @if (action.icon) {
+                  <mat-icon>{{ action.icon }}</mat-icon>
+                } @else {
+                  <span>{{ action.label }}</span>
+                }
+              </button>
+            }
+          }
+        </td>
+      </ng-container>
 
-  <div class="empty-state" *ngIf="!loading() && data().length === 0">
-    {{ emptyMessage() }}
+      <tr
+        mat-header-row
+        *matHeaderRowDef="displayedColumns(); sticky: true"
+      ></tr>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: displayedColumns()"
+        [class.clickable]="rowClickable()"
+        (click)="onRowClick(row)"
+      ></tr>
+    </table>
+
+    <!-- Estados vacíos o de carga -->
+    @if (!loading() && data().length === 0) {
+      <div class="empty-state">{{ emptyMessage() }}</div>
+    }
+    @if (loading()) {
+      <div class="loading-state">Cargando...</div>
+    }
   </div>
-  <div class="loading-state" *ngIf="loading()">Cargando...</div>
 </div>

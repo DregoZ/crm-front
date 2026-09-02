@@ -1,17 +1,146 @@
-// data-table.component.scss
+.table-container-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Espacio limpio entre buscador y tabla */
+}
+
+.table-search-bar {
+  position: relative;
+  max-width: 360px;
+
+  .search-icon {
+    position: absolute;
+    left: 8px;
+    top: 60%;
+    transform: translateY(-50%);
+    font-size: 0.85rem;
+    color: #a0aec0;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 8px 12px 8px 34px;
+    font-size: 0.9rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #2d3748;
+    transition: all 0.15s ease;
+    outline: none;
+
+    &:focus {
+      border-color: #3f51b5;
+      box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.12);
+    }
+    &::placeholder { color: #a0aec0; }
+  }
+}
+
+/* Contenedor principal con sombra suave y scroll */
 .table-scroll-wrapper {
   max-height: 70vh;
   overflow: auto;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--mat-table-row-item-outline-color, #e0e0e0);
   border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  background-color: var(--mat-table-background-color, #ffffff);
 }
-.data-table { width: 100%; }
 
-tr.clickable { cursor: pointer; }
-tr.clickable:hover { background-color: rgba(0, 0, 0, 0.04); }
+/* Tabla base */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
 
+/* Cabecera fija con tipografía refinada y fondo sólido */
+.mat-mdc-header-row {
+  background-color: var(--mat-table-header-container-background-color, #f8f9fa) !important;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.mat-mdc-header-cell {
+  color: #4a5568 !important;
+  font-size: 0.85rem !important;
+  text-transform: uppercase;
+  border-bottom: 2px solid #edf2f7 !important;
+  padding: 12px 16px !important;
+}
+
+/* Filas y Celdas de datos */
+.mat-mdc-row {
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mat-mdc-cell {
+  font-size: 0.9rem !important;
+  color: #2d3748;
+  padding: 8px 16px !important;
+  border-bottom: 1px solid #edf2f7 !important;
+}
+
+/* Comportamiento al hacer clic y hover */
+tr.clickable {
+  cursor: pointer;
+}
+
+tr.clickable:hover {
+  background-color: rgba(63, 81, 181, 0.05) !important; /* Tono sutil del color primario */
+}
+
+/* Corrección de la celda de acciones */
+.actions-cell {
+  /* ¡IMPORTANTE! 'display: flex' directo en un 'td' rompe el renderizado de la tabla en navegadores antiguos.
+     Es mejor usar 'display: inline-flex' o envolver los botones, pero esto es compatible y seguro: */
+  display: table-cell; 
+  white-space: nowrap; /* Evita que las acciones salten de línea si la pantalla se estrecha */
+  text-align: right;   /* Estéticamente las acciones suelen alinearse a la derecha */
+}
+
+/* Contenedor interno para separar los botones de acción */
+.actions-cell button {
+  margin-left: 4px;
+  margin-right: 4px;
+  transition: transform 0.15s ease;
+}
+
+.actions-cell button:hover {
+  transform: scale(1.08); /* Pequeño feedback visual al pasar el ratón por encima del botón */
+}
+
+/* Estados Vacíos y de Carga modernos */
 .empty-state, .loading-state {
-  padding: 2rem;
+  padding: 3rem 2rem;
   text-align: center;
-  color: #7f8c8d;
+  color: #718096;
+  font-size: 0.95rem;
+  background-color: var(--mat-table-background-color, #ffffff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-top: 1px solid #edf2f7;
+}
+
+/* Efecto de pulsación sutil para el estado de carga */
+.loading-state {
+  font-weight: 500;
+  animation: pulse 1.8s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* El efecto hover se aplicará solo a las filas que tengan la clase 'clickable' */
+tr.mat-mdc-row.clickable {
+  transition: background-color 0.15s ease; /* Transición suave */
+}
+
+tr.mat-mdc-row.clickable:hover {
+  background-color: var(--mat-table-row-hover-background-color, rgba(63, 81, 181, 0.04)) !important;
+  /* Nota: Puedes cambiar el rgba por el color de tu aplicación, por ejemplo un gris suave: rgba(0, 0, 0, 0.03) */
 }

@@ -1,0 +1,40 @@
+// button.component.scss
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease, opacity 0.2s ease;
+
+  &.btn-sm {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    gap: 6px;
+  }
+
+  &.disabled,
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  .icon {
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.btn-primary  { background-color: #007bff; color: #fff; &:hover { background-color: #0069d9; } }
+.btn-secondary{ background-color: #6c757d; color: #fff; &:hover { background-color: #5a6268; } }
+.btn-info     { background-color: #17a2b8; color: #fff; &:hover { background-color: #138496; } }
+.btn-warning  { background-color: #ffc107; color: #212529; &:hover { background-color: #e0a800; } }
+.btn-danger   { background-color: #e74c3c; color: #fff; &:hover { background-color: #c0392b; } }
+.btn-success  { background-color: #28a745; color: #fff; &:hover { background-color: #218838; } }

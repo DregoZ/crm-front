@@ -5,6 +5,7 @@ import {
   output,
   computed,
   ChangeDetectionStrategy,
+  signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
@@ -33,11 +34,41 @@ export class DataTableComponent<T extends { _id?: string }> {
   actions = input<TableAction<T>[]>([]);
   loading = input(false);
   emptyMessage = input('No hay registros.');
-  rowClickable = input(false);
+
+  rowClickable = input(true); // en html [rowClickable]="true"
+
   sortActive = input<string>('');
   sortDirection = input<'asc' | 'desc' | ''>('');
+
+  // NUEVO: Input para activar la barra de búsqueda y placeholder configurable
+  withSearch = input(true);
+
+  searchPlaceholder = input('Buscar en la tabla...');
+
   sortChange = output<Sort>();
+
+  // 2. Esta es la salida que emitirá la fila al hacer clic
   rowClick = output<T>();
+
+  // NUEVO: Signal interna para guardar el texto escrito
+  searchTerm = signal<string>('');
+
+  // NUEVO: Lógica de filtrado automática y genérica para CUALQUIER tipo de objeto <T>
+  filteredData = computed(() => {
+    const rawData = this.data();
+    const query = this.searchTerm().toLowerCase().trim();
+
+    if (!this.withSearch() || !query) {
+      return rawData;
+    }
+
+    // Filtra el objeto buscando coincidencias de texto en cualquiera de sus propiedades dinámicamente
+    return rawData.filter((row) =>
+      Object.values(row).some((value) =>
+        String(value).toLowerCase().includes(query),
+      ),
+    );
+  });
 
   displayedColumns = computed(() => [
     ...this.columns().map((c) => c.name),
@@ -48,8 +79,11 @@ export class DataTableComponent<T extends { _id?: string }> {
     this.sortChange.emit(sort);
   }
 
+  // 3. Modificado para usar el nuevo valor del computed automático
   onRowClick(row: T) {
-    if (this.rowClickable()) this.rowClick.emit(row);
+    if (this.rowClickable()) {
+      this.rowClick.emit(row);
+    }
   }
 
   getCellValue(row: T, column: TableColumn<T>): any {
@@ -57,6 +91,12 @@ export class DataTableComponent<T extends { _id?: string }> {
   }
 
   trackByRow(index: number, row: T): string {
-    return (row as any)._id ?? String(index);
+    return row._id ?? String(index);
+  }
+
+  // NUEVO: Método para actualizar la señal al escribir
+  onSearch(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    this.searchTerm.set(inputElement.value);
   }
 }

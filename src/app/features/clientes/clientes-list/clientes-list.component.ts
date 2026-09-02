@@ -19,6 +19,7 @@ import {
 import { Sort } from '@angular/material/sort';
 import { ListState } from '../../../shared/models/list-states';
 import { MatIconModule } from '@angular/material/icon';
+import { ButtonComponent } from '../../../shared/models/components/button/button.component';
 
 @Component({
   selector: 'app-clientes-list',
@@ -29,6 +30,7 @@ import { MatIconModule } from '@angular/material/icon';
     FormsModule,
     DataTableComponent,
     MatIconModule,
+    ButtonComponent,
   ],
   templateUrl: './clientes-list.component.html',
   styleUrl: './clientes-list.component.css',

@@ -1,0 +1,58 @@
+<!-- =========================================================================
+     EJEMPLOS PARA AÑADIR UN BOTÓN (<app-button>)
+     Consulta las variants disponibles directamente en el archivo .ts
+     ========================================================================= -->
+
+<!-- 1. Enlace con icono + texto 
+<app-button 
+  variant="primary" 
+  icon="person_add" 
+  label="Nuevo Cliente" 
+  [routerLink]="['nuevo']">
+</app-button>
+-->
+
+<!-- 2. Botón de acción (emite evento en vez de navegar) 
+<app-button 
+  variant="danger" 
+  size="sm" 
+  icon="delete" 
+  label="Borrar"
+  (clicked)="deleteCliente(cliente._id!)">
+</app-button>
+-->
+
+<!-- 3. Solo icono (sin texto) y con tooltip vía title 
+<app-button 
+  variant="info" 
+  size="sm" 
+  icon="visibility" 
+  title="Ver detalle"
+  [routerLink]="[cliente._id]">
+</app-button>
+-->
+<!-- ========================================================================= -->
+
+<a
+  *ngIf="routerLink() as link; else buttonMode"
+  [routerLink]="disabled() ? null : link"
+  [class]="cssClasses"
+  [class.disabled]="disabled()"
+  [attr.title]="effectiveTitle"
+>
+  <mat-icon *ngIf="icon()" class="icon">{{ icon() }}</mat-icon>
+  <span *ngIf="label()">{{ label() }}</span>
+</a>
+
+<ng-template #buttonMode>
+  <button
+    type="button"
+    [class]="cssClasses"
+    [disabled]="disabled()"
+    [attr.title]="effectiveTitle"
+    (click)="onClick()"
+  >
+    <mat-icon *ngIf="icon()" class="icon">{{ icon() }}</mat-icon>
+    <span *ngIf="label()">{{ label() }}</span>
+  </button>
+</ng-template>
