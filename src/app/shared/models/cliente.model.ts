@@ -5,4 +5,5 @@ export interface Cliente {
   email?: string;
   notas_gustos?: string;
   fecha_registro?: Date;
+  activo?: boolean;
 }
