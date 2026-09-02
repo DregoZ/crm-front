@@ -44,6 +44,9 @@
   </nav>
 
   <div class="sidebar-footer">
-    <button (click)="logout()" class="logout-btn">Cerrar Sesión</button>
+    <button (click)="logout()" class="logout-btn" title="Cerrar Sesión">
+      <mat-icon class="icon">logout</mat-icon>
+      <span class="nav-text" *ngIf="!isCollapsed()">Cerrar Sesión</span>
+    </button>
   </div>
 </aside>
