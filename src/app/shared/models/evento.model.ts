@@ -1,7 +1,15 @@
 import { Cliente } from './cliente.model';
 import { TipoBarra } from './tipo-barra.model';
 
-export type EstadoEvento = 'Cotizado' | 'Confirmado' | 'Finalizado' | 'Cancelado';
+export const EstadoEvento = {
+  Pendiente: 'Pendiente',
+  Confirmado: 'Confirmado',
+  Finalizado: 'Finalizado',
+  Cancelado: 'Cancelado',
+} as const;
+
+// Creamos el tipo derivado del objeto
+export type EstadoEvento = (typeof EstadoEvento)[keyof typeof EstadoEvento];
 
 export interface Evento {
   _id?: string;

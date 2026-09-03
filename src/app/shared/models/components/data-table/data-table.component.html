@@ -59,14 +59,34 @@
             @switch (column.type) {
               @case ("date") {
                 <span>{{
-                  getCellValue(row, column) | date: column.format || "shortDate"
+                  getCellValue(row, column)
+                    | date: column.format || "dd/MM/yyyy"
                 }}</span>
               }
               @case ("currency") {
                 <span>{{ getCellValue(row, column) | currency: "EUR" }}</span>
               }
               @case ("boolean") {
-                <span>{{ getCellValue(row, column) ? "Sí" : "No" }}</span>
+                <span
+                  class="status-dot"
+                  [class.status-true]="getCellValue(row, column)"
+                  [class.status-false]="!getCellValue(row, column)"
+                >
+                  <mat-icon>{{
+                    getCellValue(row, column)
+                      ? "check_circle_outline"
+                      : "cancel_outline"
+                  }}</mat-icon>
+                </span>
+              }
+              @case ("icon") {
+                <mat-icon
+                  class="material-icons-outlined"
+                  [ngClass]="getIconCellValue(row, column).color"
+                  [matTooltip]="getIconCellValue(row, column).tooltip"
+                >
+                  {{ getIconCellValue(row, column).icon }}
+                </mat-icon>
               }
               @default {
                 <span>{{ getCellValue(row, column) ?? "-" }}</span>

@@ -199,3 +199,43 @@ tr.mat-mdc-row.clickable:hover {
   min-height: 0;        /* crítico, ver nota abajo */
   overflow: hidden;
 }
+
+// semáforo
+.status-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  mat-icon {
+    font-size: 2.2rem;
+    width: 2.2rem;
+    height: 2.2rem;
+  }
+}
+
+mat-icon.material-icons-outlined {
+  font-size: 2.2rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  
+ &.warn {
+  color: #ff9100
+ }
+ &.confirmed {
+  color: #5757e0;
+ }
+ &.success {
+  color: #43a043;
+ }
+ &.error {
+  color: #f55757;
+ }
+}
+
+.status-true mat-icon {
+  color: #43a043;   /* verde */
+}
+
+.status-false mat-icon {
+  color: #f55757;   /* rojo */
+}

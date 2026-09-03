@@ -7,3 +7,8 @@ export interface Cliente {
   fecha_registro?: Date;
   activo?: boolean;
 }
+
+export interface ClienteCompleto extends Cliente {
+  proximoEvento?: { fecha_evento: string; estado: string } | null;
+  totalEventos: number;
+}

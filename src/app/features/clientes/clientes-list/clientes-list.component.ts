@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ClientesService } from '../clientes.service';
-import { Cliente } from '../../../shared/models/cliente.model';
+import { Cliente, ClienteCompleto } from '../../../shared/models/cliente.model';
 import { Router, RouterModule } from '@angular/router';
 import { BehaviorSubject, switchMap } from 'rxjs';
 import { Sort } from '@angular/material/sort';
@@ -17,6 +17,7 @@ import {
 } from '../../../shared/models/table-column.model';
 import { DataTableComponent } from '../../../shared/models/components/data-table/data-table.component';
 import { TableButtonConfig } from '../../../shared/models/button-config.model';
+import { EstadoEvento } from '../../../shared/models/evento.model';
 
 interface ListState {
   pageIndex: number; // 0-based, para el paginador
@@ -38,7 +39,7 @@ export class ClientesListComponent {
 
   limit = 10;
 
-  clientes = signal<Cliente[]>([]);
+  clientes = signal<ClienteCompleto[]>([]);
   total = signal<number>(0);
   loading = signal<boolean>(true);
 
@@ -48,11 +49,34 @@ export class ClientesListComponent {
     search: '',
   });
 
-  columns: TableColumn<Cliente>[] = [
-    { name: 'nombre', label: 'Nombre', type: 'string', size: 25 },
-    { name: 'telefono', label: 'Teléfono', type: 'string', size: 20 },
-    { name: 'email', label: 'Email', type: 'string', size: 25 },
+  columns: TableColumn<ClienteCompleto>[] = [
+    { name: 'nombre', label: 'Nombre', type: 'string', size: 20 },
+    {
+      name: 'telefono',
+      label: 'Teléfono',
+      type: 'string',
+      size: 15,
+      sortable: false,
+    },
+    { name: 'email', label: 'Email', type: 'string', size: 15 },
+    {
+      name: 'proximoEventoFecha',
+      label: 'Próximo Evento',
+      type: 'date',
+      size: 15,
+      sortable: true,
+      accessor: (c) => c.proximoEvento?.fecha_evento,
+    },
+    {
+      name: 'proximoEventoEstado',
+      label: 'Estado',
+      type: 'icon',
+      size: 15,
+      sortable: true,
+      accessor: (c) => this.getEstadoEvento(c),
+    },
     { name: 'fecha_registro', label: 'Fecha Registro', type: 'date', size: 20 },
+    { name: 'activo', label: 'Activo', type: 'boolean', size: 20 },
   ];
 
   options: TableButtonConfig[] = [
@@ -125,5 +149,21 @@ export class ClientesListComponent {
         next: () => this.state$.next(this.state$.value), // refresca la página actual
       });
     }
+  }
+
+  getEstadoEvento(cliente: ClienteCompleto): {
+    icon: string;
+    color: string;
+    tooltip: string;
+  } {
+    const evento = cliente.proximoEvento;
+    if (!evento) return { icon: '', color: '', tooltip: '' };
+    if (evento.estado === EstadoEvento.Pendiente)
+      return { icon: 'pending_actions', color: 'warn', tooltip: 'Pendiente' }; // pendiente
+    if (evento.estado === EstadoEvento.Confirmado)
+      return { icon: 'event', color: 'confirmed', tooltip: 'Confirmado' }; // confirmado
+    if (evento.estado === EstadoEvento.Finalizado)
+      return { icon: 'done_outline', color: 'success', tooltip: 'Finalizado' }; // terminado
+    return { icon: 'do_not_disturb_on', color: 'cancel', tooltip: 'Cancelado' }; // cancelado
   }
 }

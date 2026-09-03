@@ -20,6 +20,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { TableButtonConfig } from '../../button-config.model';
 import { TableAction, TableColumn } from '../../table-column.model';
 import { ButtonComponent } from '../button/button.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-data-table',
@@ -32,6 +33,7 @@ import { ButtonComponent } from '../button/button.component';
     MatButtonModule,
     MatPaginatorModule,
     ButtonComponent,
+    MatTooltipModule,
   ],
   templateUrl: './data-table.component.html',
   styleUrl: './data-table.component.scss',
@@ -178,6 +180,22 @@ export class DataTableComponent<T extends { _id?: string }> {
   }
 
   getCellValue(row: T, column: TableColumn<T>): any {
+    if (column.accessor) return column.accessor(row);
     return (row as any)[column.name];
+  }
+
+  getIconCellValue(
+    row: T,
+    column: TableColumn<T>,
+  ): { icon: string; color: string; tooltip: string } {
+    if (column.type !== 'icon')
+      throw new Error('La columna no es de tipo icon');
+    const value = this.getCellValue(row, column);
+
+    return {
+      icon: value?.icon,
+      color: value?.color,
+      tooltip: value?.tooltip,
+    };
   }
 }

@@ -16,7 +16,6 @@
     [pageSize]="limit"
     [sortActive]="state$.value.sort.active"
     [sortDirection]="state$.value.sort.direction"
-    emptyMessage="No hay clientes registrados."
     (sortChange)="onSortChange($event)"
     (pageChange)="onPageChange($event)"
     (searchChange)="onSearchChange($event)"
