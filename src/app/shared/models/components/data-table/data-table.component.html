@@ -1,30 +1,49 @@
 <div class="table-container-wrapper">
-  <!-- NUEVO: Buscador integrado reutilizable -->
-  @if (withSearch()) {
-    <div class="table-search-bar">
-      <span class="search-icon"><mat-icon>search</mat-icon></span>
-      <input
-        type="text"
-        [placeholder]="searchPlaceholder()"
-        [value]="searchTerm()"
-        (input)="onSearch($event)"
-        class="search-input"
-      />
+  <!-- Contenedor superior para Buscador + Acciones Globales -->
+  @if (withSearch() || withOptions()) {
+    <div class="table-header-actions">
+      @if (withSearch()) {
+        <div class="table-search-bar">
+          <span class="search-icon"><mat-icon>search</mat-icon></span>
+          <input
+            type="text"
+            [placeholder]="searchPlaceholder()"
+            [value]="searchTerm()"
+            (input)="onSearch($event)"
+            class="search-input"
+          />
+        </div>
+      } @else {
+        <div></div>
+      }
+
+      <div class="global-actions-wrapper">
+        @for (option of options(); track option.label) {
+          <app-button
+            [variant]="option.variant ?? 'primary'"
+            [icon]="option.icon"
+            [label]="option.label"
+            [routerLink]="option.routerLink"
+            [disabled]="option.disabled ?? false"
+            (clicked)="option.onClick ? option.onClick() : null"
+          >
+          </app-button>
+        }
+      </div>
     </div>
   }
 
-  <!-- Cambiado [dataSource] para que use los datos filtrados internamente -->
+  <!-- Estructura de la Tabla -->
   <div class="table-scroll-wrapper">
     <table
       mat-table
-      [dataSource]="filteredData()"
+      [dataSource]="renderedData()"
       matSort
       [matSortActive]="sortActive()"
       [matSortDirection]="sortDirection()"
       (matSortChange)="onSortChange($event)"
       class="data-table"
     >
-      <!-- Columnas dinámicas -->
       @for (column of columns(); track column.name) {
         <ng-container [matColumnDef]="column.name">
           <th
@@ -57,7 +76,6 @@
         </ng-container>
       }
 
-      <!-- Columna de Acciones estática -->
       <ng-container matColumnDef="__actions">
         <th mat-header-cell *matHeaderCellDef>Acciones</th>
         <td mat-cell *matCellDef="let row" class="actions-cell">
@@ -92,7 +110,6 @@
       ></tr>
     </table>
 
-    <!-- Estados vacíos o de carga -->
     @if (!loading() && data().length === 0) {
       <div class="empty-state">{{ emptyMessage() }}</div>
     }
@@ -100,4 +117,17 @@
       <div class="loading-state">Cargando...</div>
     }
   </div>
+
+  <!-- Paginador Automático -->
+  @if (showPaginator()) {
+    <mat-paginator
+      [length]="totalElements()"
+      [pageSize]="pageSize()"
+      [pageIndex]="effectivePageIndex()"
+      [pageSizeOptions]="pageSizeOptions()"
+      (page)="onPageEvent($event)"
+      aria-label="Seleccionar página"
+    >
+    </mat-paginator>
+  }
 </div>

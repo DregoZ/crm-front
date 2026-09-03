@@ -1,13 +1,6 @@
 <div class="list-container">
   <div class="header-actions">
     <h2>Clientes</h2>
-    <app-button
-      variant="primary"
-      icon="person_add"
-      label="Nuevo Cliente"
-      [routerLink]="['nuevo']"
-    >
-    </app-button>
   </div>
 
   <div *ngIf="loading()" class="loading">Cargando...</div>
@@ -16,33 +9,18 @@
     [columns]="columns"
     [data]="clientes()"
     [actions]="actions"
+    [options]="options"
     [loading]="loading()"
+    [totalElementsOverride]="total()"
+    [pageIndex]="state$.value.pageIndex"
+    [pageSize]="limit"
     [sortActive]="state$.value.sort.active"
     [sortDirection]="state$.value.sort.direction"
+    emptyMessage="No hay clientes registrados."
     (sortChange)="onSortChange($event)"
+    (pageChange)="onPageChange($event)"
+    (searchChange)="onSearchChange($event)"
     emptyMessage="No hay clientes registrados."
   >
   </app-data-table>
-
-  <div class="pagination" *ngIf="totalPages() > 1">
-    <button
-      [disabled]="(page$ | async) === 1"
-      (click)="changePage(page$.value - 1)"
-    >
-      Anterior
-    </button>
-    <span>Página {{ (state$ | async)?.page }} de {{ totalPages() }}</span>
-    <button
-      [disabled]="(state$ | async)?.page === 1"
-      (click)="changePage(state$.value.page - 1)"
-    >
-      Anterior
-    </button>
-    <button
-      [disabled]="(state$ | async)?.page === totalPages()"
-      (click)="changePage(state$.value.page + 1)"
-    >
-      Siguiente
-    </button>
-  </div>
 </div>

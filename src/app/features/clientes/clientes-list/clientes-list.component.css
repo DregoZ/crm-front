@@ -1,12 +1,84 @@
-.header-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-.table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden; }
-.table th, .table td { padding: 1rem; text-align: left; border-bottom: 1px solid #ecf0f1; }
-.table th { background-color: #f8f9fa; font-weight: 600; color: #2c3e50; }
-.btn { padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
-.btn-primary { background-color: #3498db; color: white; }
-.btn-sm { padding: 0.25rem 0.5rem; font-size: 0.875rem; border: none; border-radius: 3px; cursor: pointer; text-decoration: none; margin-right: 0.25rem; }
-.btn-info { background-color: #17a2b8; color: white; }
-.btn-warning { background-color: #ffc107; color: black; }
-.btn-danger { background-color: #dc3545; color: white; }
-.pagination { display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 1.5rem; }
-.pagination button { padding: 0.5rem 1rem; }
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.table th,
+.table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #ecf0f1;
+}
+.table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+  color: #2c3e50;
+}
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+.btn-primary {
+  background-color: #3498db;
+  color: white;
+}
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  text-decoration: none;
+  margin-right: 0.25rem;
+}
+.btn-info {
+  background-color: #17a2b8;
+  color: white;
+}
+.btn-warning {
+  background-color: #ffc107;
+  color: black;
+}
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.pagination button {
+  padding: 0.5rem 1rem;
+}
+
+.list-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0; /* crítico, ver nota abajo */
+  overflow: hidden;
+}
+
+.header-actions {
+  flex: 0 0 auto; /* altura fija, no crece ni se encoge */
+}
+
+.loading {
+  flex: 0 0 auto;
+}

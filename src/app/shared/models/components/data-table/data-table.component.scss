@@ -1,7 +1,53 @@
 .table-container-wrapper {
   display: flex;
   flex-direction: column;
+   height: 100%;
+  min-height: 0;
   gap: 12px; /* Espacio limpio entre buscador y tabla */
+}
+
+.table-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; // Separa buscador (izq) y botones (der)
+  gap: 16px; // Espacio mínimo de seguridad entre buscador y botones
+  margin-bottom: 0px; // Separación vertical con la tabla
+
+  .table-search-bar {
+    display: flex;
+    align-items: center;
+    position: relative;
+    max-width: 320px;
+    width: 100%;
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      display: flex;
+      align-items: center;
+      color: #666;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 8px 12px 8px 36px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      outline: none;
+
+      &:focus {
+        border-color: #3f51b5;
+      }
+    }
+  }
+
+  .global-actions-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px; // Espaciado horizontal entre los botones de la lista
+    flex-wrap: wrap; // Evita que se desborden si hay muchos botones en pantallas pequeñas
+  }
 }
 
 .table-search-bar {
@@ -11,7 +57,7 @@
   .search-icon {
     position: absolute;
     left: 8px;
-    top: 60%;
+    top: 50%;
     transform: translateY(-50%);
     font-size: 0.85rem;
     color: #a0aec0;
@@ -38,7 +84,8 @@
 
 /* Contenedor principal con sombra suave y scroll */
 .table-scroll-wrapper {
-  max-height: 70vh;
+  flex: 0 1 auto;    /* antes: flex: 1 */
+  min-height: 0;
   overflow: auto;
   border: 1px solid var(--mat-table-row-item-outline-color, #e0e0e0);
   border-radius: 8px;
@@ -63,8 +110,8 @@
   color: #4a5568 !important;
   font-size: 0.85rem !important;
   text-transform: uppercase;
-  border-bottom: 2px solid #edf2f7 !important;
-  padding: 12px 16px !important;
+  padding: 8px 16px !important;      /* antes 12px 16px */
+  box-shadow: inset 0 -1px 0 #d5dbe3;  /* sustituye al border-bottom */
 }
 
 /* Filas y Celdas de datos */
@@ -75,8 +122,8 @@
 .mat-mdc-cell {
   font-size: 0.9rem !important;
   color: #2d3748;
-  padding: 8px 16px !important;
-  border-bottom: 1px solid #edf2f7 !important;
+  padding: 6px 16px !important;            /* antes 8px 16px */
+  box-shadow: inset 0 -1px 0 #e8ecf1;      /* sustituye al border-bottom */
 }
 
 /* Comportamiento al hacer clic y hover */
@@ -143,4 +190,12 @@ tr.mat-mdc-row.clickable {
 tr.mat-mdc-row.clickable:hover {
   background-color: var(--mat-table-row-hover-background-color, rgba(63, 81, 181, 0.04)) !important;
   /* Nota: Puedes cambiar el rgba por el color de tu aplicación, por ejemplo un gris suave: rgba(0, 0, 0, 0.03) */
+}
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;             /* ocupa todo el espacio restante del padre */
+  min-height: 0;        /* crítico, ver nota abajo */
+  overflow: hidden;
 }

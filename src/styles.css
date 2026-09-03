@@ -1,4 +1,37 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* Scrollbar personalizado — Chrome, Edge, Safari (basados en WebKit) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #cbd5e0;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background-clip: content-box; /* crea el efecto de "padding" alrededor del thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #a0aec0;
+}
+
+/* Firefox usa una API completamente distinta (no soporta ::-webkit-scrollbar) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e0 transparent; /* thumb, track */
+}

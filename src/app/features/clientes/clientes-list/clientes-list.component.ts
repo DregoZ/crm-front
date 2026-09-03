@@ -3,60 +3,65 @@ import {
   ChangeDetectionStrategy,
   inject,
   signal,
-  OnInit,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ClientesService } from '../clientes.service';
 import { Cliente } from '../../../shared/models/cliente.model';
 import { Router, RouterModule } from '@angular/router';
-import { BehaviorSubject, combineLatest, switchMap } from 'rxjs';
-import { FormsModule } from '@angular/forms';
-import { DataTableComponent } from '../../../shared/models/components/data-table/data-table.component';
+import { BehaviorSubject, switchMap } from 'rxjs';
+import { Sort } from '@angular/material/sort';
+import { PageEvent } from '@angular/material/paginator';
 import {
   TableAction,
   TableColumn,
 } from '../../../shared/models/table-column.model';
-import { Sort } from '@angular/material/sort';
-import { ListState } from '../../../shared/models/list-states';
-import { MatIconModule } from '@angular/material/icon';
-import { ButtonComponent } from '../../../shared/models/components/button/button.component';
+import { DataTableComponent } from '../../../shared/models/components/data-table/data-table.component';
+import { TableButtonConfig } from '../../../shared/models/button-config.model';
+
+interface ListState {
+  pageIndex: number; // 0-based, para el paginador
+  sort: Sort;
+  search: string;
+}
 
 @Component({
   selector: 'app-clientes-list',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    FormsModule,
-    DataTableComponent,
-    MatIconModule,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, RouterModule, DataTableComponent],
   templateUrl: './clientes-list.component.html',
   styleUrl: './clientes-list.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClientesListComponent implements OnInit {
+export class ClientesListComponent {
   private clientesService = inject(ClientesService);
   private router = inject(Router);
 
-  page$ = new BehaviorSubject<number>(1);
-  sort$ = new BehaviorSubject<Sort>({
-    active: 'fecha_registro',
-    direction: 'desc',
-  });
   limit = 10;
 
   clientes = signal<Cliente[]>([]);
-  totalPages = signal<number>(1);
+  total = signal<number>(0);
   loading = signal<boolean>(true);
+
+  state$ = new BehaviorSubject<ListState>({
+    pageIndex: 0,
+    sort: { active: 'fecha_registro', direction: 'desc' },
+    search: '',
+  });
 
   columns: TableColumn<Cliente>[] = [
     { name: 'nombre', label: 'Nombre', type: 'string', size: 25 },
     { name: 'telefono', label: 'Teléfono', type: 'string', size: 20 },
     { name: 'email', label: 'Email', type: 'string', size: 25 },
     { name: 'fecha_registro', label: 'Fecha Registro', type: 'date', size: 20 },
-    { name: 'activo', label: 'Activo', type: 'boolean', size: 20 },
+  ];
+
+  options: TableButtonConfig[] = [
+    {
+      label: 'Nuevo Cliente',
+      variant: 'primary',
+      icon: 'person_add',
+      routerLink: 'nuevo',
+    },
   ];
 
   actions: TableAction<Cliente>[] = [
@@ -78,49 +83,47 @@ export class ClientesListComponent implements OnInit {
     },
   ];
 
-  state$ = new BehaviorSubject<ListState>({
-    page: 1,
-    sort: { active: 'fecha_registro', direction: 'desc' },
-  });
-
-  ngOnInit() {
+  constructor() {
     this.state$
       .pipe(
-        switchMap(({ page, sort }) => {
+        switchMap(({ pageIndex, sort, search }) => {
           this.loading.set(true);
           return this.clientesService.getAll(
-            page,
+            pageIndex + 1, // backend espera página 1-indexada
             this.limit,
             sort.active,
             sort.direction as 'asc' | 'desc',
+            search,
           );
         }),
       )
       .subscribe({
         next: (res) => {
           this.clientes.set(res.data);
-          this.totalPages.set(res.totalPages);
+          this.total.set(res.total);
           this.loading.set(false);
         },
         error: () => this.loading.set(false),
       });
   }
 
-  changePage(newPage: number) {
-    if (newPage >= 1 && newPage <= this.totalPages()) {
-      this.state$.next({ ...this.state$.value, page: newPage });
-    }
+  onPageChange(event: PageEvent) {
+    this.state$.next({ ...this.state$.value, pageIndex: event.pageIndex });
   }
 
   onSortChange(sort: Sort) {
-    this.state$.next({ page: 1, sort }); // una sola emisión, page y sort a la vez
+    this.state$.next({ ...this.state$.value, pageIndex: 0, sort });
+  }
+
+  onSearchChange(search: string) {
+    this.state$.next({ ...this.state$.value, pageIndex: 0, search });
   }
 
   deleteCliente(id: string) {
     if (confirm('¿Seguro que deseas eliminar este cliente?')) {
       this.clientesService.delete(id).subscribe({
-        next: () => this.page$.next(this.page$.value), // Refresh
-      }); // Error is handled by interceptor
+        next: () => this.state$.next(this.state$.value), // refresca la página actual
+      });
     }
   }
 }

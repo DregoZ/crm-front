@@ -10,15 +10,28 @@ export class ClientesService {
   private http = inject(HttpClient);
   private url = `${environment.apiUrl}/clientes`;
 
-  getAll(page: number, limit: number, sortBy?: string, order?: 'asc' | 'desc') {
-    let params = new HttpParams().set('page', page).set('limit', limit);
+  getAll(
+    page: number = 1,
+    limit: number = 10,
+    sortBy?: string,
+    order?: 'asc' | 'desc',
+    search?: string, // <-- NUEVO PARÁMETRO
+  ): Observable<PaginatedResponse<Cliente>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', limit.toString());
 
-    if (sortBy) params = params.set('sortBy', sortBy);
-    if (order) params = params.set('order', order);
+    if (sortBy) {
+      params = params.set('sortBy', sortBy);
+    }
+    if (order) {
+      params = params.set('order', order);
+    }
+    if (search && search.trim() !== '') {
+      params = params.set('search', search.trim()); // <-- Añade el parámetro a la consulta HTTP
+    }
 
-    return this.http.get<PaginatedResponse<Cliente>>(`${this.url}`, {
-      params,
-    });
+    return this.http.get<PaginatedResponse<Cliente>>(this.url, { params });
   }
 
   getById(id: string): Observable<Cliente> {
