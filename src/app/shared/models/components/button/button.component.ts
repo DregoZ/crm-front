@@ -14,7 +14,14 @@ export type ButtonVariant =
   | 'info'
   | 'warning'
   | 'danger'
-  | 'success';
+  | 'success'
+  | 'primary-outlined'
+  | 'secondary-outlined'
+  | 'info-outlined'
+  | 'warning-outlined'
+  | 'danger-outlined'
+  | 'success-outlined';
+
 export type ButtonSize = 'sm' | 'md';
 
 @Component({

@@ -1,0 +1,104 @@
+<div class="modal-header">
+  <h2 mat-dialog-title>{{ data.title }}</h2>
+  <button
+    mat-icon-button
+    (click)="close()"
+    class="close-btn"
+    aria-label="Close"
+  >
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<hr class="header-divider" />
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="modal-form">
+    @for (field of fields; track field.id) {
+      <div class="form-field-wrapper" [style.width.%]="field.size ?? 100">
+        @switch (field.type) {
+          @case ("text") {
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>{{ field.label }}</mat-label>
+              <input
+                matInput
+                [formControlName]="field.id"
+                [placeholder]="field.placeholder ?? ''"
+              />
+              @if (form.get(field.id)?.hasError("required")) {
+                <mat-error>{{ field.label }} es obligatorio</mat-error>
+              }
+            </mat-form-field>
+          }
+          @case ("number") {
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>{{ field.label }}</mat-label>
+              <input matInput type="number" [formControlName]="field.id" />
+              @if (form.get(field.id)?.hasError("required")) {
+                <mat-error>{{ field.label }} es obligatorio</mat-error>
+              }
+            </mat-form-field>
+          }
+          @case ("date") {
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>{{ field.label }}</mat-label>
+              <input
+                matInput
+                [matDatepicker]="picker"
+                [formControlName]="field.id"
+              />
+              <mat-datepicker-toggle
+                matIconSuffix
+                [for]="picker"
+              ></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              @if (form.get(field.id)?.hasError("required")) {
+                <mat-error>{{ field.label }} es obligatorio</mat-error>
+              }
+            </mat-form-field>
+          }
+          @case ("select") {
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>{{ field.label }}</mat-label>
+              <mat-select [formControlName]="field.id">
+                @for (opt of field.options; track opt.value) {
+                  <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+                }
+              </mat-select>
+              @if (form.get(field.id)?.hasError("required")) {
+                <mat-error>{{ field.label }} es obligatorio</mat-error>
+              }
+            </mat-form-field>
+          }
+          @case ("switch") {
+            <div class="switch-field">
+              <span class="switch-label">{{ field.label }}</span>
+              <mat-slide-toggle [formControlName]="field.id"></mat-slide-toggle>
+            </div>
+          }
+        }
+      </div>
+    }
+  </form>
+
+  @if (errorMessage()) {
+    <div class="error-banner">{{ errorMessage() }}</div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <!--   <app-button
+    variant="primary"
+    label="Cerrar"
+    (clicked)="close()"
+    [disabled]="saving()"
+  >
+  </app-button> -->
+
+  <app-button
+    variant="primary-outlined"
+    label="{{ saving() ? 'Guardando...' : 'Guardar' }}"
+    (clicked)="save()"
+    [disabled]="saving()"
+  >
+  </app-button>
+</mat-dialog-actions>

@@ -35,3 +35,63 @@ body {
   scrollbar-width: thin;
   scrollbar-color: #cbd5e0 transparent; /* thumb, track */
 }
+
+/* ==========================================================================
+   Angular Material Slide Toggle - Tema Global Homogéneo
+   Aplica a todos los mat-slide-toggle de la aplicación
+   ========================================================================== */
+
+mat-slide-toggle.mat-mdc-slide-toggle {
+  /* Dimensiones del switch (slider más ancho y estilizado) */
+  --mdc-switch-track-width: 48px;
+  --mdc-switch-track-height: 24px;
+  --mdc-switch-track-shape: 16px;
+
+  /* ON / ACTIVO (Verde moderno) */
+  --mdc-switch-selected-track-color: #16a34a;
+  --mdc-switch-selected-hover-track-color: #15803d;
+  --mdc-switch-selected-focus-track-color: #16a34a;
+  --mdc-switch-selected-pressed-track-color: #166534;
+  --mdc-switch-selected-handle-color: #ffffff;
+  --mdc-switch-selected-hover-handle-color: #ffffff;
+  --mdc-switch-selected-icon-color: #16a34a;
+
+  /* OFF / INACTIVO (Negro grafito) */
+  --mdc-switch-unselected-track-color: #1e293b;
+  --mdc-switch-unselected-hover-track-color: #0f172a;
+  --mdc-switch-unselected-focus-track-color: #1e293b;
+  --mdc-switch-unselected-pressed-track-color: #020617;
+  --mdc-switch-unselected-handle-color: #ffffff;
+  --mdc-switch-unselected-hover-handle-color: #ffffff;
+  --mdc-switch-unselected-icon-color: #1e293b;
+
+  /* Capa de foco / ripple */
+  --mat-slide-toggle-selected-state-layer-color: rgba(22, 163, 74, 0.2);
+  --mat-slide-toggle-state-layer-color: rgba(30, 41, 59, 0.2);
+}
+
+/* Forzar consistencia en elementos internos MDC */
+.mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked .mdc-switch__track::after {
+  background-color: #16a34a !important;
+}
+.mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked .mdc-switch__handle::after {
+  background-color: #ffffff !important;
+}
+.mat-mdc-slide-toggle.mat-mdc-slide-toggle-checked .mdc-switch__icon {
+  fill: #16a34a !important;
+}
+
+.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked)
+  .mdc-switch__track::before {
+  background-color: #1e293b !important;
+}
+.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked) .mdc-switch__track {
+  border-color: #1e293b !important;
+}
+.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked)
+  .mdc-switch__handle::after {
+  background-color: #ffffff !important;
+}
+.mat-mdc-slide-toggle:not(.mat-mdc-slide-toggle-checked) .mdc-switch__icon {
+  fill: #1e293b !important;
+}

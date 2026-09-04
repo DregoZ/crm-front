@@ -18,6 +18,10 @@ import {
 import { DataTableComponent } from '../../../shared/models/components/data-table/data-table.component';
 import { TableButtonConfig } from '../../../shared/models/button-config.model';
 import { EstadoEvento } from '../../../shared/models/evento.model';
+import { MatDialog } from '@angular/material/dialog';
+import { ModalFormComponent } from '../../../shared/models/components/modal-form/modal-form.component';
+import { FormFieldConfig } from '../../../shared/models/form-fields.model';
+import { getModalWidth } from '../../../shared/models/components/modal-form/modal-config.model';
 
 interface ListState {
   pageIndex: number; // 0-based, para el paginador
@@ -36,6 +40,7 @@ interface ListState {
 export class ClientesListComponent {
   private clientesService = inject(ClientesService);
   private router = inject(Router);
+  private dialog = inject(MatDialog);
 
   limit = 10;
 
@@ -84,7 +89,7 @@ export class ClientesListComponent {
       label: 'Nuevo Cliente',
       variant: 'primary',
       icon: 'person_add',
-      routerLink: 'nuevo',
+      onClick: () => this.onRowClick([]),
     },
   ];
 
@@ -92,13 +97,13 @@ export class ClientesListComponent {
     {
       icon: 'visibility',
       label: 'Ver',
-      handler: (c) => this.router.navigate([c._id]),
+      handler: (c) => this.onRowClick(c),
     },
-    {
+    /* {
       icon: 'edit',
       label: 'Editar',
       handler: (c) => this.router.navigate([c._id, 'editar']),
-    },
+    }, */
     {
       icon: 'delete',
       label: 'Borrar',
@@ -143,6 +148,7 @@ export class ClientesListComponent {
     this.state$.next({ ...this.state$.value, pageIndex: 0, search });
   }
 
+  // TODO: MEJORAR ESTA FUNCION PARA QUE MUESTRE UN MODAL DE CONFIRMACION
   deleteCliente(id: string) {
     if (confirm('¿Seguro que deseas eliminar este cliente?')) {
       this.clientesService.delete(id).subscribe({
@@ -165,5 +171,64 @@ export class ClientesListComponent {
     if (evento.estado === EstadoEvento.Finalizado)
       return { icon: 'done_outline', color: 'success', tooltip: 'Finalizado' }; // terminado
     return { icon: 'do_not_disturb_on', color: 'cancel', tooltip: 'Cancelado' }; // cancelado
+  }
+
+  onRowClick(cliente: any) {
+    const fields: FormFieldConfig[] = [
+      {
+        id: 'nombre',
+        type: 'text',
+        label: 'Nombre',
+        value: cliente.nombre,
+        size: 50,
+        required: true,
+      },
+      {
+        id: 'telefono',
+        type: 'text',
+        label: 'Teléfono',
+        value: cliente.telefono,
+        size: 50,
+        required: true,
+      },
+      {
+        id: 'email',
+        type: 'text',
+        label: 'Email',
+        value: cliente.email,
+        size: 100,
+      },
+      {
+        id: 'notas_gustos',
+        type: 'text',
+        label: 'Notas',
+        value: cliente.notas_gustos,
+        size: 100,
+      },
+      {
+        id: 'activo',
+        type: 'switch',
+        label: 'Activo',
+        value: cliente.activo,
+        size: 100,
+      },
+    ];
+
+    const dialogRef = this.dialog.open(ModalFormComponent, {
+      width: getModalWidth('sm'),
+      disableClose: true,
+      data: {
+        title: cliente.nombre!
+          ? `Detalle del cliente: ${cliente.nombre}`
+          : `Nuevo Cliente`,
+        fields,
+        onSave: (values: any) =>
+          this.clientesService.update(cliente._id!, values),
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) this.state$.next(this.state$.value); // refresca el listado tras guardar
+    });
   }
 }

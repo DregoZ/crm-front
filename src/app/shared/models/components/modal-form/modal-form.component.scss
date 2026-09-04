@@ -1,0 +1,84 @@
+.modal-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+}
+
+.form-field-wrapper {
+  box-sizing: border-box;
+  padding: 0 8px;
+  border-radius: 4px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* Recuadros más atenuados y alto de campos ligeramente reducido */
+.modal-form mat-form-field {
+  --mat-form-field-container-height: 50px;
+  --mdc-outlined-text-field-outline-color: #cbd5e1;
+  --mdc-outlined-text-field-hover-outline-color: #94a3b8;
+  --mdc-outlined-text-field-focus-outline-color: #2563eb;
+}
+
+.switch-field {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 10px 0;
+
+  span {
+    padding-right: 8px;
+  }
+}
+
+.error-banner {
+  background-color: #fdecea;
+  color: #c0392b;
+  padding: 10px 14px;
+  border-radius: 6px;
+  margin-top: 8px;
+  font-size: 0.9rem;
+}
+
+/* Enhanced modal-form styling */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px 0 0;
+
+  h2[mat-dialog-title] {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    color: #2c3e50;      /* darker header color */
+    font-weight: 600;    /* bolder text */
+  }
+}
+
+.close-btn {
+  /* Align to top-right inside header */
+  margin-left: auto;
+}
+
+.header-divider {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  margin: 8px 0;
+}
+
+/* Actions padding to match form container */
+mat-dialog-actions {
+  padding: 0 24px 16px 0;
+  justify-content: flex-end;
+
+  app-button{
+    margin-left: 8px;
+  }
+}
+
+/* softer corners */
+.modal-form {
+  border-radius: 8px;
+}
