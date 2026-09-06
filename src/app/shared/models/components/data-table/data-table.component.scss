@@ -8,36 +8,16 @@
 
 .table-header-actions {
   display: flex;
-  align-items: center;
-  justify-content: space-between; // Separa buscador (izq) y botones (der)
-  gap: 16px; // Espacio mínimo de seguridad entre buscador y botones
-  margin-bottom: 0px; // Separación vertical con la tabla
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 0px;
 
   .table-search-bar {
-    display: flex;
-    align-items: center;
-    position: relative;
-    max-width: 320px;
-    width: 100%;
-
-    .search-icon {
-      position: absolute;
-      left: 10px;
-      display: flex;
-      align-items: center;
-      color: #666;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 8px 12px 8px 36px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      outline: none;
-
-      &:focus {
-        border-color: #3f51b5;
-      }
+    .search-field {
+      width: 320px;
+      // Oculta el espacio de hint/error para reducir altura del campo
+      .mat-mdc-form-field-subscript-wrapper { display: none; }
     }
   }
 
@@ -45,41 +25,16 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 8px; // Espaciado horizontal entre los botones de la lista
-    flex-wrap: wrap; // Evita que se desborden si hay muchos botones en pantallas pequeñas
+    gap: 8px;
+    flex-wrap: wrap;
   }
 }
 
 .table-search-bar {
   position: relative;
   max-width: 360px;
-
-  .search-icon {
-    position: absolute;
-    left: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 0.85rem;
-    color: #a0aec0;
-  }
-
-  .search-input {
-    width: 100%;
-    padding: 8px 12px 8px 34px;
-    font-size: 0.9rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    background-color: #ffffff;
-    color: #2d3748;
-    transition: all 0.15s ease;
-    outline: none;
-
-    &:focus {
-      border-color: #3f51b5;
-      box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.12);
-    }
-    &::placeholder { color: #a0aec0; }
-  }
+  max-height: 56px;
+  padding: 8px 0 0 0;
 }
 
 /* Contenedor principal con sombra suave y scroll */

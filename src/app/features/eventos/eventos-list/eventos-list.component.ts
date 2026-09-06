@@ -169,6 +169,7 @@ export class EventosListComponent {
         label: 'Fecha',
         value: evento?.fecha_evento ?? null,
         required: true,
+        size: 25,
       },
       {
         id: 'direccion',
@@ -176,6 +177,16 @@ export class EventosListComponent {
         label: 'Dirección',
         value: evento?.direccion ?? '',
         required: true,
+        size: 75,
+      },
+      {
+        id: 'id_cliente',
+        type: 'select',
+        label: 'Cliente',
+        value: (evento?.id_cliente as any)?._id ?? '',
+        options: [],
+        required: true,
+        size: 50,
       },
       {
         id: 'cantidad_asistentes',
@@ -183,6 +194,7 @@ export class EventosListComponent {
         label: 'Asistentes',
         value: evento?.cantidad_asistentes ?? 0,
         required: true,
+        size: 25,
       },
       {
         id: 'estado',
@@ -194,20 +206,13 @@ export class EventosListComponent {
           label: v,
         })),
         required: true,
+        size: 25,
       },
       {
         id: 'precio_final_calculado',
         type: 'number',
         label: 'Precio',
         value: evento?.precio_final_calculado ?? 0,
-        required: true,
-      },
-      {
-        id: 'id_cliente',
-        type: 'select',
-        label: 'Cliente',
-        value: (evento?.id_cliente as any)?._id ?? '',
-        options: [],
         required: true,
       },
     ];
