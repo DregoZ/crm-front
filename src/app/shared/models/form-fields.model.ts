@@ -2,7 +2,13 @@ import { ModalSize } from './components/modal-form/modal-config.model';
 import { ValidatorFn } from '@angular/forms';
 import { Observable } from 'rxjs/internal/Observable';
 
-export type FieldType = 'text' | 'number' | 'date' | 'select' | 'switch';
+export type FieldType =
+  | 'text'
+  | 'textarea'
+  | 'number'
+  | 'date'
+  | 'select'
+  | 'switch';
 
 export interface SelectOption {
   value: string | number;
@@ -19,6 +25,8 @@ export interface FormFieldConfig {
   required?: boolean;
   options?: SelectOption[]; // solo para type: 'select'
   placeholder?: string;
+  maxLength?: number; // Límite de caracteres (default 128 para text)
+  rows?: number; // Número de filas para 'textarea' (default 3)
   extraValidators?: ValidatorFn[];
 }
 

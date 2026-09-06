@@ -1,0 +1,25 @@
+<div class="list-container">
+  <div class="header-actions">
+    <h2>Eventos</h2>
+  </div>
+
+  <div *ngIf="loading()" class="loading">Cargando...</div>
+
+  <app-data-table
+    [columns]="columns"
+    [data]="eventos()"
+    [actions]="actions"
+    [options]="options"
+    [loading]="loading()"
+    [totalElementsOverride]="total()"
+    [pageIndex]="state$.value.pageIndex"
+    [pageSize]="limit"
+    [sortActive]="state$.value.sort.active"
+    [sortDirection]="state$.value.sort.direction"
+    (sortChange)="onSortChange($event)"
+    (pageChange)="onPageChange($event)"
+    (searchChange)="onSearchChange($event)"
+    (rowClick)="onRowClick($event)"
+    emptyMessage="No hay eventos registrados.">
+  </app-data-table>
+</div>

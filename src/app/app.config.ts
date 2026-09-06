@@ -11,6 +11,7 @@ import { registerLocaleData } from '@angular/common';
 import localeEs from '@angular/common/locales/es';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { MatPaginatorIntlEs } from './shared/i18n/mat-paginator-intl-es';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 registerLocaleData(localeEs);
 
@@ -23,6 +24,7 @@ export const appConfig: ApplicationConfig = {
     ),
     provideAnimations(),
     provideAnimationsAsync(),
+    provideNativeDateAdapter(),
     { provide: LOCALE_ID, useValue: 'es-ES' },
     { provide: MatPaginatorIntl, useClass: MatPaginatorIntlEs },
   ],

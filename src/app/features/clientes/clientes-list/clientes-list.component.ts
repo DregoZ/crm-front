@@ -173,57 +173,84 @@ export class ClientesListComponent {
     return { icon: 'do_not_disturb_on', color: 'cancel', tooltip: 'Cancelado' }; // cancelado
   }
 
-  onRowClick(cliente: any) {
+  onRowClick(cliente?: any) {
+    const isEdit = Boolean(cliente?._id);
+
     const fields: FormFieldConfig[] = [
       {
         id: 'nombre',
         type: 'text',
         label: 'Nombre',
-        value: cliente.nombre,
-        size: 50,
+        value: cliente?.nombre ?? '',
+        size: 40,
         required: true,
       },
       {
         id: 'telefono',
         type: 'text',
         label: 'Teléfono',
-        value: cliente.telefono,
-        size: 50,
+        value: cliente?.telefono ?? '',
+        size: 20,
         required: true,
       },
       {
         id: 'email',
         type: 'text',
         label: 'Email',
-        value: cliente.email,
-        size: 100,
+        value: cliente?.email ?? '',
+        size: 40,
       },
       {
         id: 'notas_gustos',
-        type: 'text',
+        type: 'textarea',
         label: 'Notas',
-        value: cliente.notas_gustos,
+        value: cliente?.notas_gustos ?? '',
         size: 100,
+        rows: 3,
+      },
+      {
+        id: 'proximoEventoFecha',
+        type: 'date',
+        label: 'Próximo Evento',
+        value: cliente?.proximoEvento?.fecha_evento ?? null,
+        size: 25,
+        editable: false,
+      },
+      {
+        id: 'proximoEventoEstado',
+        type: 'select',
+        label: 'Estado',
+        value: cliente?.proximoEvento?.estado ?? EstadoEvento.Pendiente,
+        size: 25,
+        options: [
+          { value: EstadoEvento.Pendiente, label: 'Pendiente' },
+          { value: EstadoEvento.Confirmado, label: 'Confirmado' },
+          { value: EstadoEvento.Finalizado, label: 'Finalizado' },
+          { value: EstadoEvento.Cancelado, label: 'Cancelado' },
+        ],
+        editable: false,
       },
       {
         id: 'activo',
         type: 'switch',
         label: 'Activo',
-        value: cliente.activo,
-        size: 100,
+        value: cliente?.activo ?? true,
+        size: 50,
       },
     ];
 
     const dialogRef = this.dialog.open(ModalFormComponent, {
-      width: getModalWidth('sm'),
+      width: getModalWidth('md'),
       disableClose: true,
       data: {
-        title: cliente.nombre!
+        title: isEdit
           ? `Detalle del cliente: ${cliente.nombre}`
           : `Nuevo Cliente`,
         fields,
         onSave: (values: any) =>
-          this.clientesService.update(cliente._id!, values),
+          isEdit
+            ? this.clientesService.update(cliente._id!, values)
+            : this.clientesService.create(values),
       },
     });
 

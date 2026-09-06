@@ -20,6 +20,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import {
+  MatNativeDateModule,
+  provideNativeDateAdapter,
+} from '@angular/material/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatButtonModule } from '@angular/material/button';
 import { ButtonComponent } from '../button/button.component';
@@ -38,11 +42,13 @@ import { MatIconModule } from '@angular/material/icon';
     MatInputModule,
     MatSelectModule,
     MatDatepickerModule,
+    MatNativeDateModule,
     MatSlideToggleModule,
     MatButtonModule,
     ButtonComponent,
     MatIconModule,
   ],
+  providers: [provideNativeDateAdapter()],
   templateUrl: './modal-form.component.html',
   styleUrl: './modal-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,10 +65,27 @@ export class ModalFormComponent {
       this.data.fields.map((field: any) => {
         const validators = [];
         if (field.required) validators.push(Validators.required);
+        if (field.type === 'text') {
+          validators.push(Validators.maxLength(field.maxLength ?? 128));
+        } else if (field.type === 'textarea' && field.maxLength) {
+          validators.push(Validators.maxLength(field.maxLength));
+        }
         if (field.extraValidators) validators.push(...field.extraValidators);
 
+        let initialValue = field.value;
+        if (
+          field.type === 'date' &&
+          field.value &&
+          !(field.value instanceof Date)
+        ) {
+          const parsed = new Date(field.value);
+          if (!isNaN(parsed.getTime())) {
+            initialValue = parsed;
+          }
+        }
+
         const control = new FormControl(
-          { value: field.value, disabled: field.editable === false },
+          { value: initialValue, disabled: field.editable === false },
           validators,
         );
         return [field.id, control];

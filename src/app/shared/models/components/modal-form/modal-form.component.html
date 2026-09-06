@@ -23,9 +23,31 @@
                 matInput
                 [formControlName]="field.id"
                 [placeholder]="field.placeholder ?? ''"
+                [maxlength]="field.maxLength ?? 128"
               />
               @if (form.get(field.id)?.hasError("required")) {
                 <mat-error>{{ field.label }} es obligatorio</mat-error>
+              }
+              @if (form.get(field.id)?.hasError("maxlength")) {
+                <mat-error>Máximo {{ field.maxLength ?? 128 }} caracteres</mat-error>
+              }
+            </mat-form-field>
+          }
+          @case ("textarea") {
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>{{ field.label }}</mat-label>
+              <textarea
+                matInput
+                [formControlName]="field.id"
+                [placeholder]="field.placeholder ?? ''"
+                [rows]="field.rows ?? 3"
+                [maxlength]="field.maxLength ?? null"
+              ></textarea>
+              @if (form.get(field.id)?.hasError("required")) {
+                <mat-error>{{ field.label }} es obligatorio</mat-error>
+              }
+              @if (form.get(field.id)?.hasError("maxlength")) {
+                <mat-error>Máximo {{ field.maxLength }} caracteres</mat-error>
               }
             </mat-form-field>
           }
