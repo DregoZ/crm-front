@@ -29,7 +29,9 @@
                 <mat-error>{{ field.label }} es obligatorio</mat-error>
               }
               @if (form.get(field.id)?.hasError("maxlength")) {
-                <mat-error>Máximo {{ field.maxLength ?? 128 }} caracteres</mat-error>
+                <mat-error
+                  >Máximo {{ field.maxLength ?? 128 }} caracteres</mat-error
+                >
               }
             </mat-form-field>
           }
@@ -95,6 +97,16 @@
             <div class="switch-field">
               <span class="switch-label">{{ field.label }}</span>
               <mat-slide-toggle [formControlName]="field.id"></mat-slide-toggle>
+            </div>
+          }
+          @case ("button") {
+            <div class="button-field">
+              <app-button
+                variant="primary-outlined"
+                label="{{ field.label }}"
+                (clicked)="field?.onClick()"
+              >
+              </app-button>
             </div>
           }
         }

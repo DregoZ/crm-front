@@ -5,7 +5,7 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { BehaviorSubject, switchMap } from 'rxjs';
 import { Sort } from '@angular/material/sort';
@@ -38,7 +38,8 @@ export class EventosListComponent {
   private eventosService = inject(EventosService);
   private clientesService = inject(ClientesService);
   private dialog = inject(MatDialog);
-  private router = inject(RouterModule);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   limit = 10;
   eventos = signal<Evento[]>([]);
@@ -76,7 +77,7 @@ export class EventosListComponent {
       type: 'icon',
       size: 15,
       sortable: true,
-      accessor: (e) => e.estado,
+      accessor: (c) => this.getEstadoEvento(c),
     },
     {
       name: 'precio_final_calculado',
@@ -138,6 +139,11 @@ export class EventosListComponent {
         },
         error: () => this.loading.set(false),
       });
+
+    this.route.queryParamMap.subscribe((params) => {
+      const openId = params.get('openId');
+      if (openId) this.abrirEventoPorId(openId);
+    });
   }
 
   onPageChange(event: PageEvent) {
@@ -158,6 +164,21 @@ export class EventosListComponent {
         .delete(id)
         .subscribe({ next: () => this.state$.next(this.state$.value) });
     }
+  }
+
+  getEstadoEvento(evento: Evento): {
+    icon: string;
+    color: string;
+    tooltip: string;
+  } {
+    if (!evento) return { icon: '', color: '', tooltip: '' };
+    if (evento.estado === EstadoEvento.Pendiente)
+      return { icon: 'pending_actions', color: 'warn', tooltip: 'Pendiente' }; // pendiente
+    if (evento.estado === EstadoEvento.Confirmado)
+      return { icon: 'event', color: 'confirmed', tooltip: 'Confirmado' }; // confirmado
+    if (evento.estado === EstadoEvento.Finalizado)
+      return { icon: 'done_outline', color: 'success', tooltip: 'Finalizado' }; // terminado
+    return { icon: 'do_not_disturb_on', color: 'cancel', tooltip: 'Cancelado' }; // cancelado
   }
 
   onRowClick(evento?: Evento) {
@@ -241,6 +262,112 @@ export class EventosListComponent {
       dialogRef.afterClosed().subscribe((result) => {
         if (result) this.state$.next(this.state$.value);
       });
+    });
+  }
+
+  private abrirEventoPorId(id: string) {
+    this.eventosService.getById(id).subscribe({
+      next: (evento) => this.openEventoModal(evento),
+      error: () => {
+        // TODO opcional: mostrar un aviso si el evento ya no existe
+      },
+    });
+
+    // Limpia el query param de la URL para que no se reabra si el usuario refresca
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {},
+      replaceUrl: true,
+    });
+  }
+
+  openEventoModal(evento: Evento) {
+    const cliente = evento.id_cliente as any; // populado por el backend
+    const tipoBarra = evento.id_tipo_barra as any;
+
+    const fields: FormFieldConfig[] = [
+      {
+        id: 'cliente',
+        type: 'text',
+        label: 'Cliente',
+        value: cliente?.nombre ?? '',
+        size: 50,
+        editable: false,
+      },
+      {
+        id: 'tipoBarra',
+        type: 'text',
+        label: 'Tipo de Barra',
+        value: tipoBarra?.nombre_barra ?? '',
+        size: 50,
+        editable: false,
+      },
+      {
+        id: 'fecha_evento',
+        type: 'date',
+        label: 'Fecha del evento',
+        value: evento.fecha_evento,
+        size: 50,
+        required: true,
+      },
+      {
+        id: 'estado',
+        type: 'select',
+        label: 'Estado',
+        value: evento.estado,
+        size: 50,
+        required: true,
+        options: [
+          { value: 'Cotizado', label: 'Cotizado' },
+          { value: 'Confirmado', label: 'Confirmado' },
+          { value: 'Finalizado', label: 'Finalizado' },
+          { value: 'Cancelado', label: 'Cancelado' },
+        ],
+      },
+      {
+        id: 'direccion',
+        type: 'text',
+        label: 'Dirección',
+        value: evento.direccion,
+        size: 100,
+        required: true,
+      },
+      {
+        id: 'cantidad_asistentes',
+        type: 'number',
+        label: 'Asistentes',
+        value: evento.cantidad_asistentes,
+        size: 50,
+        required: true,
+      },
+      {
+        id: 'precio_final_calculado',
+        type: 'number',
+        label: 'Precio Final (€)',
+        value: evento.precio_final_calculado,
+        size: 50,
+      },
+      {
+        id: 'logistica_notas',
+        type: 'text',
+        label: 'Notas logísticas',
+        value: evento.logistica_notas,
+        size: 100,
+      },
+    ];
+
+    const dialogRef = this.dialog.open(ModalFormComponent, {
+      width: '700px',
+      data: {
+        title: `Evento: ${cliente?.nombre ?? ''}`,
+        fields,
+        onSave: (values: any) =>
+          this.eventosService.update(evento._id!, values),
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) this.state$.next(this.state$.value); // refresca el listado si se guardó algo
     });
   }
 }

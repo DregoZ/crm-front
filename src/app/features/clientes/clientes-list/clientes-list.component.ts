@@ -22,6 +22,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ModalFormComponent } from '../../../shared/models/components/modal-form/modal-form.component';
 import { FormFieldConfig } from '../../../shared/models/form-fields.model';
 import { getModalWidth } from '../../../shared/models/components/modal-form/modal-config.model';
+import { EventosService } from '../../eventos/eventos.service';
 
 interface ListState {
   pageIndex: number; // 0-based, para el paginador
@@ -39,6 +40,7 @@ interface ListState {
 })
 export class ClientesListComponent {
   private clientesService = inject(ClientesService);
+  private eventosService = inject(EventosService);
   private router = inject(Router);
   private dialog = inject(MatDialog);
 
@@ -208,15 +210,21 @@ export class ClientesListComponent {
         size: 100,
         rows: 3,
       },
-      {
+    ];
+
+    if (
+      cliente?.proximoEvento?.fecha_evento &&
+      cliente?.proximoEvento?.estado
+    ) {
+      fields.push({
         id: 'proximoEventoFecha',
         type: 'date',
         label: 'Próximo Evento',
         value: cliente?.proximoEvento?.fecha_evento ?? null,
         size: 25,
         editable: false,
-      },
-      {
+      });
+      fields.push({
         id: 'proximoEventoEstado',
         type: 'select',
         label: 'Estado',
@@ -229,15 +237,22 @@ export class ClientesListComponent {
           { value: EstadoEvento.Cancelado, label: 'Cancelado' },
         ],
         editable: false,
-      },
-      {
-        id: 'activo',
-        type: 'switch',
-        label: 'Activo',
-        value: cliente?.activo ?? true,
-        size: 50,
-      },
-    ];
+      });
+      fields.push({
+        id: 'evento-nav',
+        type: 'button',
+        label: 'Ver Evento',
+        onClick: () => this.openEvento(cliente?.proximoEvento?._id!),
+        size: 25,
+      });
+    }
+    fields.push({
+      id: 'activo',
+      type: 'switch',
+      label: 'Activo',
+      value: cliente?.activo ?? true,
+      size: 100,
+    });
 
     const dialogRef = this.dialog.open(ModalFormComponent, {
       width: getModalWidth('md'),
@@ -257,5 +272,11 @@ export class ClientesListComponent {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) this.state$.next(this.state$.value); // refresca el listado tras guardar
     });
+  }
+
+  openEvento(id?: string) {
+    if (!id) return;
+    this.dialog.closeAll();
+    this.router.navigate(['/eventos'], { queryParams: { openId: id } }); // navega a la ruta y una vez allí usa estos paramas
   }
 }

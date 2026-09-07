@@ -8,7 +8,8 @@ export type FieldType =
   | 'number'
   | 'date'
   | 'select'
-  | 'switch';
+  | 'switch'
+  | 'button';
 
 export interface SelectOption {
   value: string | number;
@@ -16,10 +17,11 @@ export interface SelectOption {
 }
 
 export interface FormFieldConfig {
+  onClick?: () => void;
   id: string;
   type: FieldType;
-  label: string;
-  value: any; // string | number | Date | boolean | (string|number)
+  label?: string;
+  value?: any; // string | number | Date | boolean | (string|number)
   size?: number; // % de ancho, default 100
   editable?: boolean; // default true
   required?: boolean;
