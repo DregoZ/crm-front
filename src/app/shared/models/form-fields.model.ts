@@ -6,6 +6,7 @@ export type FieldType =
   | 'text'
   | 'textarea'
   | 'number'
+  | 'currency'
   | 'date'
   | 'select'
   | 'switch'
@@ -30,6 +31,7 @@ export interface FormFieldConfig {
   maxLength?: number; // Límite de caracteres (default 128 para text)
   rows?: number; // Número de filas para 'textarea' (default 3)
   extraValidators?: ValidatorFn[];
+  currencySymbol?: string; // default '€'
 }
 
 export interface FormModalData {

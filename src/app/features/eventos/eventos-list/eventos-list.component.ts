@@ -1,30 +1,35 @@
+import { CommonModule, formatDate } from '@angular/common';
 import {
-  Component,
   ChangeDetectionStrategy,
+  Component,
   inject,
+  LOCALE_ID,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { BehaviorSubject, switchMap } from 'rxjs';
-import { Sort } from '@angular/material/sort';
 import { PageEvent } from '@angular/material/paginator';
-import {
-  TableColumn,
-  TableAction,
-} from '../../../shared/models/table-column.model';
+import { Sort } from '@angular/material/sort';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { BehaviorSubject, switchMap } from 'rxjs';
 import { TableButtonConfig } from '../../../shared/models/button-config.model';
 import { DataTableComponent } from '../../../shared/models/components/data-table/data-table.component';
-import { ModalFormComponent } from '../../../shared/models/components/modal-form/modal-form.component';
-import { FormFieldConfig } from '../../../shared/models/form-fields.model';
 import { getModalWidth } from '../../../shared/models/components/modal-form/modal-config.model';
+import { ModalFormComponent } from '../../../shared/models/components/modal-form/modal-form.component';
+import {
+  FormFieldConfig,
+  SelectOption,
+} from '../../../shared/models/form-fields.model';
+import {
+  TableAction,
+  TableColumn,
+} from '../../../shared/models/table-column.model';
 
-import { Evento, EstadoEvento } from '../../../shared/models/evento.model';
 import { Cliente } from '../../../shared/models/cliente.model';
+import { EstadoEvento, Evento } from '../../../shared/models/evento.model';
 import { PaginatedResponse } from '../../../shared/models/paginated-response.model';
-import { EventosService } from '../eventos.service';
 import { ClientesService } from '../../clientes/clientes.service';
+import { EventosService } from '../eventos.service';
+import { TiposBarraService } from '../../tipos-barra/tipos-barra.service';
 
 @Component({
   selector: 'app-eventos-list',
@@ -35,8 +40,10 @@ import { ClientesService } from '../../clientes/clientes.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventosListComponent {
+  private locale = inject(LOCALE_ID);
   private eventosService = inject(EventosService);
-  private clientesService = inject(ClientesService);
+  private barrasService = inject(TiposBarraService);
+  tipoBarraOptions = signal<SelectOption[]>([]);
   private dialog = inject(MatDialog);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -61,10 +68,24 @@ export class EventosListComponent {
       name: 'fecha_evento',
       label: 'Fecha',
       type: 'date',
-      size: 15,
+      size: 10,
       sortable: true,
     },
     { name: 'direccion', label: 'Dirección', type: 'string', size: 20 },
+    {
+      name: 'nombre_barra',
+      label: 'Tipo Barra',
+      type: 'string',
+      size: 10,
+      accessor: (row) => (row.id_tipo_barra as any)?.nombre_barra || '',
+    },
+    {
+      name: 'precio_persona',
+      label: 'PPP',
+      type: 'number',
+      size: 10,
+      accessor: (row) => (row.id_tipo_barra as any)?.precio_persona || '',
+    },
     {
       name: 'cantidad_asistentes',
       label: 'Asistentes',
@@ -72,18 +93,19 @@ export class EventosListComponent {
       size: 10,
     },
     {
+      name: 'precio_final_calculado',
+      label: 'Estimado (€)',
+      type: 'number',
+      size: 10,
+      accessor: (row) => this.calculoEstimado(row) || 0,
+    },
+    {
       name: 'estado',
       label: 'Estado',
       type: 'icon',
-      size: 15,
+      size: 10,
       sortable: true,
       accessor: (c) => this.getEstadoEvento(c),
-    },
-    {
-      name: 'precio_final_calculado',
-      label: 'Precio',
-      type: 'number',
-      size: 10,
     },
     {
       name: 'cliente',
@@ -146,6 +168,18 @@ export class EventosListComponent {
     });
   }
 
+  ngOnInit() {
+    this.barrasService.getAll().subscribe((barras) => {
+      console.log(barras);
+      this.tipoBarraOptions.set(
+        barras.data.map((barra) => ({
+          value: barra._id!,
+          label: barra.nombre_barra,
+        })),
+      );
+    });
+  }
+
   onPageChange(event: PageEvent) {
     this.state$.next({ ...this.state$.value, pageIndex: event.pageIndex });
   }
@@ -182,87 +216,13 @@ export class EventosListComponent {
   }
 
   onRowClick(evento?: Evento) {
-    const isEdit = Boolean(evento?._id);
-    const fields: FormFieldConfig[] = [
-      {
-        id: 'fecha_evento',
-        type: 'date',
-        label: 'Fecha',
-        value: evento?.fecha_evento ?? null,
-        required: true,
-        size: 25,
-      },
-      {
-        id: 'direccion',
-        type: 'text',
-        label: 'Dirección',
-        value: evento?.direccion ?? '',
-        required: true,
-        size: 75,
-      },
-      {
-        id: 'id_cliente',
-        type: 'select',
-        label: 'Cliente',
-        value: (evento?.id_cliente as any)?._id ?? '',
-        options: [],
-        required: true,
-        size: 50,
-      },
-      {
-        id: 'cantidad_asistentes',
-        type: 'number',
-        label: 'Asistentes',
-        value: evento?.cantidad_asistentes ?? 0,
-        required: true,
-        size: 25,
-      },
-      {
-        id: 'estado',
-        type: 'select',
-        label: 'Estado',
-        value: evento?.estado ?? EstadoEvento.Pendiente,
-        options: Object.entries(EstadoEvento).map(([k, v]) => ({
-          value: v,
-          label: v,
-        })),
-        required: true,
-        size: 25,
-      },
-      {
-        id: 'precio_final_calculado',
-        type: 'number',
-        label: 'Precio',
-        value: evento?.precio_final_calculado ?? 0,
-        required: true,
-      },
-    ];
+    this.openEventoModal(evento);
+  }
 
-    // Load client options asynchronously
-    this.clientesService.getAll(1, 1000).subscribe((res) => {
-      const clientOptions = res.data.map((c: any) => ({
-        value: c._id,
-        label: c.nombre,
-      }));
-      fields.find((f) => f.id === 'id_cliente')!.options = clientOptions;
-
-      const dialogRef = this.dialog.open(ModalFormComponent, {
-        width: getModalWidth('md'),
-        disableClose: true,
-        data: {
-          title: isEdit ? `Editar Evento` : `Nuevo Evento`,
-          fields,
-          onSave: (values: any) =>
-            isEdit
-              ? this.eventosService.update(evento!._id!, values)
-              : this.eventosService.create(values),
-        },
-      });
-
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) this.state$.next(this.state$.value);
-      });
-    });
+  calculoEstimado(row: Evento) {
+    const asistentes = row.cantidad_asistentes || 0;
+    const precioPersona = (row.id_tipo_barra as any)?.precio_persona || 0;
+    return asistentes * precioPersona;
   }
 
   private abrirEventoPorId(id: string) {
@@ -281,9 +241,10 @@ export class EventosListComponent {
     });
   }
 
-  openEventoModal(evento: Evento) {
-    const cliente = evento.id_cliente as any; // populado por el backend
-    const tipoBarra = evento.id_tipo_barra as any;
+  openEventoModal(evento?: Evento) {
+    const cliente = evento?.id_cliente as any; // populado por el backend
+    const tipoBarra = evento?.id_tipo_barra as any;
+    const isEdit = Boolean(evento?._id);
 
     const fields: FormFieldConfig[] = [
       {
@@ -296,17 +257,24 @@ export class EventosListComponent {
       },
       {
         id: 'tipoBarra',
-        type: 'text',
+        type: 'select',
         label: 'Tipo de Barra',
         value: tipoBarra?.nombre_barra ?? '',
-        size: 50,
-        editable: false,
+        options: this.tipoBarraOptions(),
+        size: 30,
+      },
+      {
+        id: 'precio_persona',
+        type: 'currency',
+        label: 'Precio por persona',
+        value: tipoBarra?.precio_persona ?? '',
+        size: 20,
       },
       {
         id: 'fecha_evento',
         type: 'date',
         label: 'Fecha del evento',
-        value: evento.fecha_evento,
+        value: evento?.fecha_evento,
         size: 50,
         required: true,
       },
@@ -314,7 +282,7 @@ export class EventosListComponent {
         id: 'estado',
         type: 'select',
         label: 'Estado',
-        value: evento.estado,
+        value: evento?.estado,
         size: 50,
         required: true,
         options: [
@@ -328,7 +296,7 @@ export class EventosListComponent {
         id: 'direccion',
         type: 'text',
         label: 'Dirección',
-        value: evento.direccion,
+        value: evento?.direccion,
         size: 100,
         required: true,
       },
@@ -336,7 +304,7 @@ export class EventosListComponent {
         id: 'cantidad_asistentes',
         type: 'number',
         label: 'Asistentes',
-        value: evento.cantidad_asistentes,
+        value: evento?.cantidad_asistentes,
         size: 50,
         required: true,
       },
@@ -344,25 +312,28 @@ export class EventosListComponent {
         id: 'precio_final_calculado',
         type: 'number',
         label: 'Precio Final (€)',
-        value: evento.precio_final_calculado,
+        value: evento?.precio_final_calculado,
         size: 50,
       },
       {
         id: 'logistica_notas',
-        type: 'text',
+        type: 'textarea',
         label: 'Notas logísticas',
-        value: evento.logistica_notas,
+        value: evento?.logistica_notas,
         size: 100,
       },
     ];
 
     const dialogRef = this.dialog.open(ModalFormComponent, {
-      width: '700px',
+      width: getModalWidth('md'),
+      disableClose: true,
       data: {
-        title: `Evento: ${cliente?.nombre ?? ''}`,
+        title: `Detalle Evento: ${evento?.fecha_evento ? formatDate(evento.fecha_evento, 'dd/MM/yyyy', this.locale) : 'Nuevo Evento'}`,
         fields,
         onSave: (values: any) =>
-          this.eventosService.update(evento._id!, values),
+          isEdit
+            ? this.eventosService.update(evento!._id!, values)
+            : this.eventosService.create(values),
       },
     });
 
