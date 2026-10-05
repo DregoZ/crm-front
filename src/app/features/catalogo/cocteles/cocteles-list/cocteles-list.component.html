@@ -1,0 +1,17 @@
+<div class="list-container">
+  <app-data-table
+    [title]="'Catálogo de Cócteles'"
+    [data]="cocteles()"
+    [totalElementsOverride]="total()"
+    [columns]="columns"
+    [loading]="loading()"
+    [options]="options"
+    [actions]="actions"
+    [pageSize]="limit"
+    (pageChange)="onPageChange($event)"
+    (sortChange)="onSortChange($event)"
+    (searchChange)="onSearchChange($event)"
+    (rowClick)="onRowClick($event)"
+  >
+  </app-data-table>
+</div>
