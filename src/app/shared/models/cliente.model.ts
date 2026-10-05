@@ -2,6 +2,7 @@ export interface Cliente {
   _id?: string;
   nombre: string;
   telefono: string;
+  dni: string;
   email?: string;
   notas_gustos?: string;
   fecha_registro?: Date;

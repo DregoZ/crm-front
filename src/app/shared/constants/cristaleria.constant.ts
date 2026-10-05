@@ -10,6 +10,7 @@ export const CRISTALERIA_OPTIONS: SelectOption[] = [
   { value: 'Vaso Tubo', label: 'Vaso Tubo clásico' },
   { value: 'Jarra / Mug de Cobre', label: 'Jarra / Mug de Cobre (Moscow Mule)' },
   { value: 'Vaso Chupito / Shot', label: 'Vaso Chupito / Shot' },
+  { value: 'Jarra / Mug de Acero', label: 'Jarra / Mug de Acero (Negroni)' },
 ];
 
 export const UNIDADES_MEDIDA_OPTIONS: SelectOption[] = [

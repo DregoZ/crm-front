@@ -197,11 +197,20 @@ export class ClientesListComponent {
         required: true,
       },
       {
+        id: 'dni',
+        type: 'text',
+        label: 'DNI',
+        value: cliente?.dni ?? '',
+        size: 20,
+        required: true,
+      },
+
+      {
         id: 'email',
         type: 'text',
         label: 'Email',
         value: cliente?.email ?? '',
-        size: 40,
+        size: 20,
       },
       {
         id: 'notas_gustos',
