@@ -1,43 +1,133 @@
-<div class="form-container">
-  <h2>Nuevo Cóctel</h2>
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label>Nombre del Cóctel *</label>
-      <input type="text" formControlName="nombre" class="form-control">
-    </div>
-    
-    <div class="form-group">
-      <label>Cristalería *</label>
-      <input type="text" formControlName="cristaleria" class="form-control" placeholder="Ej: Vaso Largo">
+<div class="modal-header">
+  <h2 mat-dialog-title>
+    {{ isEdit ? 'Editar Cóctel: ' + data?.coctel?.nombre : 'Nuevo Cóctel' }}
+  </h2>
+  <button
+    mat-icon-button
+    type="button"
+    (click)="close()"
+    class="close-btn"
+    aria-label="Cerrar"
+  >
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<hr class="header-divider" />
+
+<mat-dialog-content class="modal-dialog-content">
+  <form [formGroup]="form" class="modal-form">
+    <div class="main-fields">
+      <mat-form-field appearance="outline" class="field-item full-width">
+        <mat-label>Nombre del Cóctel</mat-label>
+        <input
+          matInput
+          formControlName="nombre"
+          placeholder="Ej: Mojito Clásico, Negroni..."
+        />
+        @if (form.get('nombre')?.hasError('required')) {
+          <mat-error>El nombre del cóctel es obligatorio</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="field-item full-width">
+        <mat-label>Tipo de Vaso / Cristalería</mat-label>
+        <mat-select formControlName="cristaleria">
+          @for (opt of cristaleriaOptions; track opt.value) {
+            <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
+          }
+        </mat-select>
+        @if (form.get('cristaleria')?.hasError('required')) {
+          <mat-error>Selecciona el tipo de cristalería</mat-error>
+        }
+      </mat-form-field>
     </div>
 
     <div class="ingredientes-section">
       <div class="ingredientes-header">
-        <h3>Ingredientes</h3>
-        <button type="button" class="btn btn-sm btn-success" (click)="addIngrediente()">+ Añadir</button>
-      </div>
-      
-      <div formArrayName="ingredientes">
-        <div *ngFor="let ing of ingredientes.controls; let i=index" [formGroupName]="i" class="ingrediente-row">
-          <input type="text" formControlName="nombre_insumo" class="form-control" placeholder="Nombre (Ej: Ron Blanco)">
-          <input type="number" formControlName="cantidad_por_persona" class="form-control" placeholder="Cantidad">
-          <select formControlName="unidad_medida" class="form-control">
-            <option value="ml">ml</option>
-            <option value="pieza">pieza</option>
-            <option value="gramos">gramos</option>
-            <option value="hojas">hojas</option>
-          </select>
-          <button type="button" class="btn btn-sm btn-danger" (click)="removeIngrediente(i)">X</button>
+        <div>
+          <h3>Receta / Ingredientes por persona</h3>
+          <p class="subtitle">Define los insumos y dosis unitaria</p>
         </div>
+        <button
+          mat-stroked-button
+          color="primary"
+          type="button"
+          (click)="addIngrediente()"
+        >
+          <mat-icon>add</mat-icon>
+          Añadir Insumo
+        </button>
       </div>
-      <div *ngIf="ingredientes.length === 0" class="empty-state">
-        Añade al menos un ingrediente.
+
+      <div formArrayName="ingredientes" class="ingredientes-list">
+        @for (ing of ingredientes.controls; track ing; let i = $index) {
+          <div [formGroupName]="i" class="ingrediente-row">
+            <mat-form-field appearance="outline" class="col-nombre">
+              <mat-label>Insumo / Ingrediente</mat-label>
+              <input
+                matInput
+                formControlName="nombre_insumo"
+                placeholder="Ej: Ron Blanco, Zumo Lima..."
+              />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="col-cantidad">
+              <mat-label>Cantidad</mat-label>
+              <input
+                matInput
+                type="number"
+                step="0.5"
+                formControlName="cantidad_por_persona"
+              />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="col-unidad">
+              <mat-label>Unidad</mat-label>
+              <mat-select formControlName="unidad_medida">
+                @for (u of unidadesMedidaOptions; track u.value) {
+                  <mat-option [value]="u.value">{{ u.label }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <button
+              mat-icon-button
+              type="button"
+              color="warn"
+              (click)="removeIngrediente(i)"
+              [disabled]="ingredientes.length === 1"
+              title="Eliminar ingrediente"
+              class="btn-remove"
+            >
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+        }
       </div>
+
+      @if (ingredientes.length === 0) {
+        <div class="empty-state">
+          No hay ingredientes en la receta. Haz clic en "Añadir Insumo".
+        </div>
+      }
     </div>
 
-    <div class="actions">
-      <button type="button" routerLink="/catalogo/cocteles" class="btn btn-secondary">Cancelar</button>
-      <button type="submit" [disabled]="form.invalid || ingredientes.length === 0" class="btn btn-primary">Guardar Cóctel</button>
-    </div>
+    @if (errorMessage()) {
+      <div class="error-banner">{{ errorMessage() }}</div>
+    }
   </form>
-</div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="close()" [disabled]="saving()">
+    Cancelar
+  </button>
+
+  <app-button
+    variant="primary-outlined"
+    [label]="saving() ? 'Guardando...' : 'Guardar Cóctel'"
+    (clicked)="onSubmit()"
+    [disabled]="saving() || form.invalid || ingredientes.length === 0"
+  >
+  </app-button>
+</mat-dialog-actions>

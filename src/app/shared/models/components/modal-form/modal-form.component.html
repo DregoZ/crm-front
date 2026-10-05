@@ -98,7 +98,10 @@
           @case ("select") {
             <mat-form-field appearance="outline" class="full-width">
               <mat-label>{{ field.label }}</mat-label>
-              <mat-select [formControlName]="field.id">
+              <mat-select
+                [formControlName]="field.id"
+                [multiple]="field.multiple ?? false"
+              >
                 @for (opt of field.options; track opt.value) {
                   <mat-option [value]="opt.value">{{ opt.label }}</mat-option>
                 }

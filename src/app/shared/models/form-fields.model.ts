@@ -27,6 +27,7 @@ export interface FormFieldConfig {
   editable?: boolean; // default true
   required?: boolean;
   options?: SelectOption[]; // solo para type: 'select'
+  multiple?: boolean; // solo para type: 'select' (multiselección)
   placeholder?: string;
   maxLength?: number; // Límite de caracteres (default 128 para text)
   rows?: number; // Número de filas para 'textarea' (default 3)
