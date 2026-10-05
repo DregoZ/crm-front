@@ -1,35 +1,21 @@
-import { CommonModule, formatDate } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  LOCALE_ID,
-  signal,
-} from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
-import { Sort } from '@angular/material/sort';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { BehaviorSubject, switchMap } from 'rxjs';
-import { TableButtonConfig } from '../../../shared/models/button-config.model';
-import { DataTableComponent } from '../../../shared/models/components/data-table/data-table.component';
-import { getModalWidth } from '../../../shared/models/components/modal-form/modal-config.model';
-import { ModalFormComponent } from '../../../shared/models/components/modal-form/modal-form.component';
-import {
-  FormFieldConfig,
-  SelectOption,
-} from '../../../shared/models/form-fields.model';
-import {
-  TableAction,
-  TableColumn,
-} from '../../../shared/models/table-column.model';
-
-import { Cliente } from '../../../shared/models/cliente.model';
-import { EstadoEvento, Evento } from '../../../shared/models/evento.model';
-import { PaginatedResponse } from '../../../shared/models/paginated-response.model';
-import { ClientesService } from '../../clientes/clientes.service';
-import { EventosService } from '../eventos.service';
-import { TiposBarraService } from '../../tipos-barra/tipos-barra.service';
+import {CommonModule, formatDate} from '@angular/common';
+import {ChangeDetectionStrategy, Component, inject, LOCALE_ID, signal,} from '@angular/core';
+import {MatDialog} from '@angular/material/dialog';
+import {PageEvent} from '@angular/material/paginator';
+import {Sort} from '@angular/material/sort';
+import {ActivatedRoute, Router, RouterModule} from '@angular/router';
+import {BehaviorSubject, switchMap} from 'rxjs';
+import {TableButtonConfig} from '../../../shared/models/button-config.model';
+import {DataTableComponent} from '../../../shared/models/components/data-table/data-table.component';
+import {getModalWidth} from '../../../shared/models/components/modal-form/modal-config.model';
+import {ModalFormComponent} from '../../../shared/models/components/modal-form/modal-form.component';
+import {FormFieldConfig, SelectOption,} from '../../../shared/models/form-fields.model';
+import {TableAction, TableColumn,} from '../../../shared/models/table-column.model';
+import {Cliente} from '../../../shared/models/cliente.model';
+import {EstadoEvento, Evento} from '../../../shared/models/evento.model';
+import {PaginatedResponse} from '../../../shared/models/paginated-response.model';
+import {EventosService} from '../eventos.service';
+import {TiposBarraService} from '../../tipos-barra/tipos-barra.service';
 
 @Component({
   selector: 'app-eventos-list',
@@ -43,11 +29,11 @@ export class EventosListComponent {
   private locale = inject(LOCALE_ID);
   private eventosService = inject(EventosService);
   private barrasService = inject(TiposBarraService);
-  tipoBarraOptions = signal<SelectOption[]>([]);
   private dialog = inject(MatDialog);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
+  tipoBarraOptions = signal<SelectOption[]>([]);
   limit = 10;
   eventos = signal<Evento[]>([]);
   total = signal<number>(0);
@@ -82,7 +68,7 @@ export class EventosListComponent {
     {
       name: 'precio_persona',
       label: 'PPP',
-      type: 'number',
+      type: 'currency',
       size: 10,
       accessor: (row) => (row.id_tipo_barra as any)?.precio_persona || '',
     },
@@ -93,8 +79,8 @@ export class EventosListComponent {
       size: 10,
     },
     {
-      name: 'precio_final_calculado',
-      label: 'Estimado (€)',
+      name: 'precio_final',
+      label: 'Estimado',
       type: 'number',
       size: 10,
       accessor: (row) => this.calculoEstimado(row) || 0,
@@ -192,6 +178,7 @@ export class EventosListComponent {
     this.state$.next({ ...this.state$.value, pageIndex: 0, search });
   }
 
+  // TODO implementar un dialog para borrado
   deleteEvento(id: string) {
     if (confirm('¿Seguro que deseas eliminar este evento?')) {
       this.eventosService
@@ -238,7 +225,7 @@ export class EventosListComponent {
       relativeTo: this.route,
       queryParams: {},
       replaceUrl: true,
-    });
+    }).then(r => []);
   }
 
   openEventoModal(evento?: Evento) {
@@ -286,7 +273,7 @@ export class EventosListComponent {
         size: 50,
         required: true,
         options: [
-          { value: 'Cotizado', label: 'Cotizado' },
+          { value: 'Pendiente', label: 'Pendiente' },
           { value: 'Confirmado', label: 'Confirmado' },
           { value: 'Finalizado', label: 'Finalizado' },
           { value: 'Cancelado', label: 'Cancelado' },
@@ -305,15 +292,23 @@ export class EventosListComponent {
         type: 'number',
         label: 'Asistentes',
         value: evento?.cantidad_asistentes,
-        size: 50,
+        size: 30,
         required: true,
       },
+      // solo en detalle
       {
-        id: 'precio_final_calculado',
-        type: 'number',
+        id: 'precio_estimado',
+        type: 'currency',
+        label: 'Precio Estimado (€)',
+        value: this.calculoEstimado(<Evento>evento) || 0,
+        size: 30,
+      },
+      {
+        id: 'precio_final',
+        type: 'currency',
         label: 'Precio Final (€)',
-        value: evento?.precio_final_calculado,
-        size: 50,
+        value: evento?.precio_final,
+        size: 30,
       },
       {
         id: 'logistica_notas',

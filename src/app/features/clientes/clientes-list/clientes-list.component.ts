@@ -159,6 +159,7 @@ export class ClientesListComponent {
     }
   }
 
+  // TODO fragmento duplicado con eventod
   getEstadoEvento(cliente: ClienteCompleto): {
     icon: string;
     color: string;

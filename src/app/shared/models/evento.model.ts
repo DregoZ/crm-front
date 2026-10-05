@@ -20,5 +20,5 @@ export interface Evento {
   cantidad_asistentes: number;
   estado: EstadoEvento;
   logistica_notas?: string;
-  precio_final_calculado: number;
+  precio_final: number;
 }

@@ -33,7 +33,7 @@ export class DashboardService {
           direccion: 'Calle Falsa 123',
           cantidad_asistentes: 50,
           estado: 'Confirmado',
-          precio_final_calculado: 1250,
+          precio_final: 1250,
         } as Evento,
         {
           _id: 'e2',
@@ -43,7 +43,7 @@ export class DashboardService {
           direccion: 'Avenida Siempreviva 742',
           cantidad_asistentes: 30,
           estado: 'Pendiente',
-          precio_final_calculado: 450,
+          precio_final: 450,
         } as Evento,
       ],
       alertas: [
